@@ -1,0 +1,23 @@
+.navbar-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 2vh;
+    background-color: rgb(71, 71, 252);
+    height: 7vh;
+    padding-left: 5vw;
+    padding-right: 5vw;
+    align-items: center;
+}
+.navbar-login-button{
+    height: 5vh;
+    width: 8vw;
+    border: none;
+    background-color: rgb(3, 3, 101);
+    color: white;
+    border-radius: 5px;
+}
+.navbar-logo{
+    height: 5vh;
+    width: 8vw;
+}

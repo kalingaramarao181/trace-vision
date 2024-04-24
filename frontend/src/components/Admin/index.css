@@ -1,0 +1,168 @@
+.admin-sidebar {
+    width: 18vw;
+    padding: 0.5vw;
+    background-image: url("https://static.vecteezy.com/system/resources/thumbnails/004/242/978/small_2x/abstract-dark-blue-wave-trendy-geometric-abstract-background-free-vector.jpg");
+    background-size: cover;
+    font-family: "Roboto";
+    font-size: 1.6vw;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.admin-sidebar-button {
+    background-color: transparent;
+    border: none;
+    font-size: 1.5vw;
+    padding: 0.8vw;
+    margin-bottom: 1vh;
+    color: white;
+    width: 18vw;
+    text-align: left;
+}
+.admin-sidebar-button:hover {
+    background-color: #0E0C49;
+}
+.tw-admin-container{
+    display: flex;
+    flex-direction: row;
+}
+.tw-add-button-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-left: 2vw;
+    padding-right: 1vw;
+    width: 78vw;
+    align-items: center;
+    border-bottom: 1px solid rgb(27, 32, 36);
+}
+.tw-rec-name{
+    font-size: 1.5vw;
+    font-family: roboto;
+    color: rgb(27, 32, 36);
+}
+.tw-add-button{
+    color: white;
+    background-color: rgb(2, 74, 74);
+    border-radius: 5px;
+    border: none;
+    padding: 1vw;
+}
+.tw-generate-button-bar{
+    display: flex;
+    flex-direction: row;
+    padding: 2vh;
+    width: 78vw;
+    align-items: center;
+}
+.tw-generate-button{
+    color: white;
+    background-color: rgb(70, 74, 2);
+    border-radius: 5px;
+    border: none;
+    padding: 1vw;
+    margin-right: 1vw;
+}
+.tw-generate-employe-button{
+    color: white;
+    background-color: rgb(3, 63, 95);
+    border-radius: 5px;
+    border: none;
+    padding: 1vw;
+    margin-right: 1vw;
+}
+.tw-pie-chart-button{
+    color: white;
+    background-color: rgb(1, 62, 19);
+    border-radius: 5px;
+    border: none;
+    padding: 1vw;
+    margin-right: 1vw;
+}
+.tw-admin-popup-container{
+    background-color: white;
+}
+.tw-input{
+    padding: 0.5vw;
+    border-radius: 5px;
+    width: 12vw;
+    height: 3vh;
+}
+.tw-select{
+    padding: 0.5vw;
+    border-radius: 5px;
+    width: 13vw;
+    height: 5vh;
+}
+.tw-label{
+    font-size: 1vw;
+    margin-right: 1vw;
+    margin-bottom: 0.5vh;
+    font-weight: 600;
+}
+.tw-input-container{
+    display: flex;
+    flex-direction: column;
+    margin-right: 1vw;
+    margin-bottom: 2vh;
+    min-width: 13vw;
+}
+.tw-input-pack-container{
+    display: flex;
+}
+.tw-textarea{
+    border-radius: 5px;
+}
+.tw-file-input-container{
+    border: 0.1px solid grey;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px;
+    margin-bottom: 1.5vh;
+}
+.tw-file-input-label{
+    background-color: grey;
+    text-align: center;
+    padding: 1vh;
+    width: 8vw;
+    color: white;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+}
+.tw-file-input{
+    padding: 1vh;
+}
+.tw-popup-button-container{
+    display: flex;
+    align-self: flex-end;
+    margin-top: 2vh;
+}
+.popup-save{
+    background-color:rgb(59, 50, 233);
+    color: white;
+    border-radius: 5px;
+    padding: 1vh;
+    border: none;
+    margin-right: 1vw;
+    width: 8vw;
+    height: 5vh;
+}
+.popup-close{
+    background-color:grey;
+    color: white;
+    border-radius: 5px;
+    padding: 1vh;
+    border: none;
+    margin-right: 1vw;
+    width: 8vw;
+    height: 5vh;
+}
+.tw-form-container{
+    display: flex;
+    flex-direction: column;
+}
