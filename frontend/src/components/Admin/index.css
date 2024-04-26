@@ -1,3 +1,27 @@
+p{
+    font-size: 1.5vw;
+}
+button{
+    font-size: 1vw;
+    cursor: pointer;
+}
+h1{
+    font-size: 2.5vw;
+    font-family: roboto;
+}
+th{
+    background-color: rgb(3, 84, 3);
+    color: white;
+    padding: 1vh;
+    font-size: 1.3vw;
+}
+td{
+    padding: 1vh;
+    font-size: 1.5vw;
+}
+
+
+
 .admin-sidebar {
     width: 18vw;
     padding: 0.5vw;
@@ -10,6 +34,8 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-start;
+    height: 87vh;
+    flex-shrink: 0;
 }
 .admin-sidebar-button {
     background-color: transparent;
@@ -27,6 +53,7 @@
 .tw-admin-container{
     display: flex;
     flex-direction: row;
+    height: 80vh;
 }
 .tw-add-button-container{
     display: flex;
@@ -37,6 +64,7 @@
     width: 78vw;
     align-items: center;
     border-bottom: 1px solid rgb(27, 32, 36);
+
 }
 .tw-rec-name{
     font-size: 1.5vw;
@@ -49,40 +77,50 @@
     border-radius: 5px;
     border: none;
     padding: 1vw;
+    cursor: pointer;
 }
 .tw-generate-button-bar{
     display: flex;
     flex-direction: row;
     padding: 2vh;
-    width: 78vw;
+    width: 75vw;
     align-items: center;
+    cursor: pointer;
+    margin-bottom: 1vh;
 }
 .tw-generate-button{
     color: white;
     background-color: rgb(70, 74, 2);
     border-radius: 5px;
     border: none;
-    padding: 1vw;
+    width: 12vw;
+    height: 4.5vh;
     margin-right: 1vw;
+    cursor: pointer;
 }
 .tw-generate-employe-button{
     color: white;
     background-color: rgb(3, 63, 95);
     border-radius: 5px;
     border: none;
-    padding: 1vw;
+    width: 18vw;
+    height: 4.5vh;  
     margin-right: 1vw;
+    cursor: pointer;
 }
 .tw-pie-chart-button{
     color: white;
     background-color: rgb(1, 62, 19);
     border-radius: 5px;
     border: none;
-    padding: 1vw;
+    width: 12vw;
+    height: 4.5vh;
     margin-right: 1vw;
 }
 .tw-admin-popup-container{
     background-color: white;
+    display: flex;
+    flex-direction: column;
 }
 .tw-input{
     padding: 0.5vw;
@@ -141,6 +179,7 @@
     display: flex;
     align-self: flex-end;
     margin-top: 2vh;
+    text-align: left;
 }
 .popup-save{
     background-color:rgb(59, 50, 233);
@@ -165,4 +204,76 @@
 .tw-form-container{
     display: flex;
     flex-direction: column;
+}
+
+.data-view-table-container{
+    border: 1px solid black;
+    border-radius: 5px;
+    max-width: 77vw;
+    min-width: 77vw;
+    padding: 0%;
+}
+.data-view-table-data{
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+    text-align: center;
+}
+.tw-data-view-container{
+    padding-left: 3vw;
+    height: 60vh;
+    flex-grow: 1;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+.action-view-button, .action-edit-button, .action-delete-button{
+    margin-right: 0.5vw;
+    border-radius: 5px;
+    color: white;
+    border: none;
+    font-size: 1vw;
+    width: 4vw;
+    height: 3.5vh;
+    background-color: blue;
+    cursor: pointer;
+}
+.action-edit-button{
+    background-color: rgb(200, 200, 7);
+}
+.action-delete-button{
+    background-color: red;
+}
+
+.applicaton-data-name{
+    font-size: 1.2vw;
+    font-weight: bold;
+}
+.application-data-span{
+    font-weight: 400;
+    padding: 2vh;
+}
+
+.data-view-table-data-submittion{
+    text-align: left;
+}
+.admin-search-input-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 2vw;
+    padding-right: 2vw;
+    margin-bottom: 2vh;
+}
+.adimin-main-data-top-container{
+    flex-shrink: 0;
+}
+.admin-search-head-element{
+    margin: 1vh;
+    font-size: 2vw;
+}
+.admin-search-input{
+    height: 4vh;
+    width: 15vw;
+    padding-left: 0.5vw;
+    border-radius: 5px;
 }

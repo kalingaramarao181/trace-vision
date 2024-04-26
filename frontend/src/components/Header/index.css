@@ -3,17 +3,19 @@
     flex-direction: row;
     justify-content: space-between;
     padding: 2vh;
-    background-color: rgb(71, 71, 252);
+    background-image: url("https://static.vecteezy.com/system/resources/thumbnails/004/242/978/small_2x/abstract-dark-blue-wave-trendy-geometric-abstract-background-free-vector.jpg");
+    background-size: cover;
     height: 7vh;
     padding-left: 5vw;
     padding-right: 5vw;
     align-items: center;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 8px 20px 0 rgba(0, 0, 0, 0.19);
 }
 .navbar-login-button{
     height: 5vh;
     width: 8vw;
     border: none;
-    background-color: rgb(3, 3, 101);
+    background-color: rgb(3, 106, 175);
     color: white;
     border-radius: 5px;
 }
