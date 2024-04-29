@@ -277,3 +277,11 @@ td{
     padding-left: 0.5vw;
     border-radius: 5px;
 }
+.user-admin-span{
+    background-color: green;
+    font-size: 0.5vw;
+    border-radius: 3px;
+    padding: 2px;
+    color: white;
+    margin-left: 0.1vw;
+}

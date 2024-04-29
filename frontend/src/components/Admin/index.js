@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import Popup from 'reactjs-popup';
 import axios from "axios";
+import { confirmAlert } from 'react-confirm-alert';
+import Users from "../Users";
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import * as XLSX from 'xlsx';
 import "./index.css"
 import config from "../config";
 const baseUrl = config.baseUrl
@@ -9,10 +13,14 @@ const Admin = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenDataView, setIsOpenDataView] = useState(false);
     const [isOpenEditView, setIsOpenEditView] = useState(false);
+    const [isOpenUserForm, setIsOpenUserForm] = useState(false);
     const [applicationData, setApplicationData] = useState([])
+    const [companyUserData, setCompanyUserData] = useState([])
     const [editForm, setEditForm] = useState({})
+    const [searchValue, setSearchValue] = useState("")
     const [viewData, setViewData] = useState({})
     const [sidebarStatus, setSidebarStatus] = useState("Recruiting")
+    const [formUser, setFormUser] = useState({})
     const [form, setForm] = useState({
         recruiter: "", category: "", recruiterid: "1234", candidatename: "",
         date: "", clientname: "", pocname: "", feedback: "", remarks: "", resumePath: "",
@@ -31,9 +39,23 @@ const Admin = () => {
             })
     }, [])
 
+    useEffect(() => {
+        axios.get(`${baseUrl}company-user`)
+        .then(res => {
+            setCompanyUserData(res.data)
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }, [])
+
     //ADDING FORM TEXT
     const handleFormData = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value })
+    }
+
+    const handleUserFormData = (e) => {
+        setFormUser({ ...formUser, [e.target.name]: e.target.value })
     }
 
     //ADDING FORM FILES
@@ -42,14 +64,19 @@ const Admin = () => {
     }
 
     const handleEditFormData = (e) => {
-        setEditForm({...editForm, [e.target.name]: e.target.value})
+        setEditForm({ ...editForm, [e.target.name]: e.target.value })
         console.log(editForm);
     }
 
     const handleEditFileData = (e) => {
-        setEditForm({...editForm, [e.target.name]: e.target.files[0]})
+        setEditForm({ ...editForm, [e.target.name]: e.target.files[0]})
     }
 
+    //SEARCH
+    const searchedCategory = applicationData.filter(each => each.category === sidebarStatus)
+    const searchedData = searchedCategory.filter(each => each.recruitername.toLowerCase().includes(searchValue) || each.candidatename.toLowerCase().includes(searchValue))
+
+    
 
 
     //*USER CRUD*//
@@ -85,9 +112,28 @@ const Admin = () => {
 
         await axios.delete(`${baseUrl}delete-user/` + userId)
             .then(res => {
-                alert("User Deleted Successfully")
+                console.log("User Deleted Successfully")
             })
             .catch(err => console.log(err))
+    }
+
+    //DELETE CONFORM ALERT
+    const deleteAlert = (appId, application) => {
+        confirmAlert({
+            title: 'Confirm to delete',
+            message: 'Are you sure you want to delete this item?',
+            backgroundColor: 'transparent',
+            buttons: [
+                {
+                    label: 'Cancel',
+                    onClick: () => console.log('Delete canceled')
+                },
+                {
+                    label: 'Delete',
+                    onClick: () => onClickDeleteUser(appId, application)
+                }
+            ]
+        });
     }
 
 
@@ -113,6 +159,18 @@ const Admin = () => {
         }
     }
 
+    const handleSubmitUser = (e) => {
+        e.preventDefault()
+        axios.post(`${baseUrl}company-user`, formUser)
+        .then(res => {
+            alert("Successfully Inserted Data");
+            window.location.reload()
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+
     const handleUpdateForm = async (e) => {
         e.preventDefault()
         const formData = new FormData();
@@ -123,7 +181,7 @@ const Admin = () => {
         const userId = viewData.id
 
         try {
-            await axios.put(`${baseUrl}update-form/`+ userId, formData, {
+            await axios.put(`${baseUrl}update-form/` + userId, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -139,6 +197,81 @@ const Admin = () => {
     //OPEN FILE 
     const openFile = (filePath) => {
         window.open(filePath, '_blank');
+    }
+
+    //DOWNLOAD EXCEL
+    const downloadExcel = () => {
+        // Convert data to Excel format
+        const wb = XLSX.utils.book_new();
+        wb.Props = {
+          Title: `${sidebarStatus}-${searchValue}`,
+          Author: 'Your Name',
+        };
+        const ws = XLSX.utils.json_to_sheet(searchedData);
+        XLSX.utils.book_append_sheet(wb, ws, 'Data');
+    
+        // Generate Excel file and trigger download
+        XLSX.writeFile(wb, `${sidebarStatus}-${searchValue}.xlsx`);
+      };
+
+
+    const userListFormPopup = () => {
+        return (
+            <Popup
+                open={isOpenUserForm}
+                onClose={() => setIsOpenUserForm(false)}
+                closeOnDocumentClick
+                contentStyle={{
+                    width: "40vw",
+                    padding: '3.5vw',
+                    borderRadius: '10px',
+                    boxShadow: '0 6px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+                    transition: 'opacity 0.5s ease-in-out', // Transition effect for opacity
+                    backgroundColor: "white",
+                    height: "40vh",
+                    overflowY: "auto",
+                    scrollbarWidth: "none", /* Firefox */
+                }}
+            >
+                {close => (
+                    <div className="tw-admin-popup-container">
+                        <div>
+                            <h1>Application</h1>
+                            <form onSubmit={handleSubmitUser} className="tw-form-container">
+                                <div className="tw-input-pack-container">
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">Name</label>
+                                        <input name="username" onChange={handleUserFormData} type="text" className="tw-input" />
+                                    </div>
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">User Name</label>
+                                        <input name="email" onChange={handleUserFormData} type="text" className="tw-input" />
+                                    </div>
+                                </div>
+                                <div className="tw-input-pack-container">
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">Password</label>
+                                        <input name="password" onChange={handleUserFormData} type="password" className="tw-input" />
+                                    </div>
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">User Type:</label>
+                                        <select name="usertype" onChange={handleUserFormData} className="tw-select">
+                                            <option value="Swain">--Selet User Type--</option>
+                                            <option value="Admin">Admin</option>
+                                            <option value="Staff">Staff</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="tw-popup-button-container">
+                                    <button type="submit" className="popup-save">Save</button>
+                                    <button type="button" onClick={() => setIsOpenUserForm(false)} className="popup-close">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+            </Popup>
+        )
     }
 
 
@@ -169,8 +302,8 @@ const Admin = () => {
                             <form onSubmit={handleSubmit} className="tw-form-container">
                                 <div className="tw-input-container">
                                     <label className="tw-label">Category:</label>
-                                    <select name="category" onChange={handleFormData} className="tw-select">
-                                        <option value="Recruiting">--Select Category--</option>
+                                    <select name="category" onChange={handleFormData} className="tw-select" required>
+                                        <option value="">--Select Category--</option>
                                         <option value="Recruiting">Recruiting</option>
                                         <option value="Bench">Bench</option>
                                         <option value="Hot">Hot</option>
@@ -186,60 +319,58 @@ const Admin = () => {
                                 <div className="tw-input-pack-container">
                                     <div className="tw-input-container">
                                         <label className="tw-label">Recruiter Name:</label>
-                                        <select name="recruiter" onChange={handleFormData} className="tw-select">
-                                            <option value="Swain">--Recruiter Name--</option>
-                                            <option value="Swain">Swain</option>
-                                            <option value="Aleesa">Aleesa</option>
-                                            <option value="Robort">Robort</option>
-                                            <option value="Max">Max</option>
-                                            <option value="Mike">Mike</option>
+                                        <select name="recruiter" onChange={handleFormData} className="tw-select" required>
+                                            <option value="">--Recruiter Name--</option>
+                                            {companyUserData.map((each, index) => {
+                                                return <option key={index} value={each.username}>{each.username}</option>
+                                            })}
                                         </select>
                                     </div>
                                     <div className="tw-input-container">
                                         <label className="tw-label">Submittion Date</label>
-                                        <input name="date" onChange={handleFormData} type="date" className="tw-input" />
+                                        <input name="date" onChange={handleFormData} type="date" className="tw-input" required/>
                                     </div>
                                     <div className="tw-input-container">
                                         <label className="tw-label">Candidate Name</label>
-                                        <input name="candidatename" onChange={handleFormData} type="text" className="tw-input" />
+                                        <input name="candidatename" onChange={handleFormData} type="text" className="tw-input" required/>
                                     </div>
                                 </div>
                                 <div className="tw-input-pack-container">
                                     <div className="tw-input-container">
                                         <label className="tw-label">Client Name</label>
-                                        <input name="clientname" onChange={handleFormData} type="text" className="tw-input" />
+                                        <input name="clientname" onChange={handleFormData} type="text" className="tw-input" required/>
                                     </div>
                                     <div className="tw-input-container">
                                         <label className="tw-label">POC Name</label>
-                                        <input name="pocname" onChange={handleFormData} type="text" className="tw-input" />
+                                        <input name="pocname" onChange={handleFormData} type="text" className="tw-input" required/>
                                     </div>
                                     <div className="tw-input-container">
                                         <label className="tw-label">Feedback</label>
-                                        <input name="feedback" onChange={handleFormData} type="text" className="tw-input" />
+                                        <input name="feedback" onChange={handleFormData} type="text" className="tw-input" required/>
                                     </div>
                                 </div>
                                 <div className="tw-input-container">
                                     <label className="tw-label">Remarks</label>
-                                    <textarea name="remarks" onChange={handleFormData} type="text" cols={20} rows={4} className="tw-textarea" />
+                                    <textarea name="remarks" onChange={handleFormData} type="text" cols={20} rows={4} className="tw-textarea" required/>
                                 </div>
                                 <div className="tw-file-input-container">
-                                    <input id="resume" name="resume" type="file" onChange={handleFileData} className="tw-file-input" />
+                                    <input id="resume" name="resume" type="file" onChange={handleFileData} className="tw-file-input" required/>
                                     <label className="tw-file-input-label" htmlFor="resume">Resume</label>
                                 </div>
                                 <div className="tw-file-input-container">
-                                    <input id="R2R" name="r2r" type="file" onChange={handleFileData} className="tw-input" />
+                                    <input id="R2R" name="r2r" type="file" onChange={handleFileData} className="tw-input" required/>
                                     <label className="tw-file-input-label" htmlFor="R2R">R2R</label>
                                 </div>
                                 <div className="tw-file-input-container">
-                                    <input id="driving" name="driving" type="file" onChange={handleFileData} className="tw-input" />
+                                    <input id="driving" name="driving" type="file" onChange={handleFileData} className="tw-input" required/>
                                     <label className="tw-file-input-label" htmlFor="driving">Driving Lisense</label>
                                 </div>
                                 <div className="tw-file-input-container">
-                                    <input id="visa" name="visa" type="file" onChange={handleFileData} className="tw-input" />
+                                    <input id="visa" name="visa" type="file" onChange={handleFileData} className="tw-input" required/>
                                     <label className="tw-file-input-label" htmlFor="visa">Visa Copy</label>
                                 </div>
                                 <div className="tw-file-input-container">
-                                    <input id="MSA" name="msa" type="file" onChange={handleFileData} className="tw-input" />
+                                    <input id="MSA" name="msa" type="file" onChange={handleFileData} className="tw-input" required/>
                                     <label className="tw-file-input-label" htmlFor="MSA">MSA Copy</label>
                                 </div>
                                 <div className="tw-popup-button-container">
@@ -304,13 +435,11 @@ const Admin = () => {
                                     </tr>
                                     <tr className="applicaton-data-name"><td>Recruiter Name: </td><td><span className="application-data-span">{viewData.recruitername}</span></td>
                                         <td>
-                                            <select name="recruitername" onChange={handleEditFormData} className="tw-select">
-                                                <option value="Swain">--Recruiter Name--</option>
-                                                <option value="Swain">Swain</option>
-                                                <option value="Aleesa">Aleesa</option>
-                                                <option value="Robort">Robort</option>
-                                                <option value="Max">Max</option>
-                                                <option value="Mike">Mike</option>
+                                            <select name="recruitername" onChange={handleEditFormData} className="tw-select" required>
+                                                <option value="">--Recruiter Name--</option>
+                                                {companyUserData.map((each, index) => {
+                                                return <option key={index} value={each.username}>{each.username}</option>
+                                            })}
                                             </select>
                                         </td>
                                     </tr>
@@ -369,7 +498,7 @@ const Admin = () => {
                             <hr />
                         </div>
                         <div className="tw-popup-button-container">
-                        <button type="submit" className="popup-save">Update</button>
+                            <button type="submit" className="popup-save">Update</button>
                             <button type="button" onClick={() => setIsOpenEditView(false)} className="popup-close">Close</button>
                         </div>
                     </form>
@@ -432,6 +561,7 @@ const Admin = () => {
 
     //VIEW APPLICATION DATA CATEGORY WISE
     const categoryDataView = () => {
+        if (sidebarStatus === "Recruiting" || sidebarStatus === "Bench"){
         return (
             <div className="tw-data-view-container">
                 <table className="data-view-table-container">
@@ -445,7 +575,7 @@ const Admin = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {applicationData.map((eachApplication, index) => {
+                        {searchedData.map((eachApplication, index) => {
                             return <tr key={index}>
                                 <td className="data-view-table-data">{index + 1}</td>
                                 <td className="data-view-table-data data-view-table-data-submittion">
@@ -458,14 +588,20 @@ const Admin = () => {
                                 <td className="data-view-table-data">
                                     <button onClick={() => onClickDataView(eachApplication.id)} className="action-view-button">View</button>
                                     <button onClick={() => onClickEditUser(eachApplication.id, eachApplication)} className="action-edit-button">Edit</button>
-                                    <button onClick={() => onClickDeleteUser(eachApplication.id, eachApplication)} className="action-delete-button">Delete</button>
+                                    <button onClick={() => deleteAlert(eachApplication.id, eachApplication)} className="action-delete-button">Delete</button>
                                 </td>
                             </tr>
                         })}
                     </tbody>
                 </table>
+                {searchedData.length === 0 && <p>No Data Found</p>}
             </div>
         )
+    }
+    else if (sidebarStatus === "Users"){
+        return <Users searchValueData={searchValue}/>
+    }
+
     }
 
     //ACTUAL DATA
@@ -487,23 +623,25 @@ const Admin = () => {
             </div>
             <div className="adimin-main-data-container">
                 <div className="adimin-main-data-top-container">
-                <div className="tw-add-button-container">
-                    <p className="tw-rec-name">{sidebarStatus} List</p>
-                    <button onClick={() => setIsOpen(true)} className="tw-add-button">+ Add New</button>
-                </div>
-                <div className="tw-generate-button-bar">
-                    <button className="tw-generate-button">Generate Report</button>
-                    <button className="tw-generate-employe-button">Generate Employe Report - Barchart</button>
-                    <button className="tw-pie-chart-button">Benchsale Pie Chart</button>
-                </div>
-                <div className="admin-search-input-container">
-                    <h1 className="admin-search-head-element">{sidebarStatus} View</h1>
-                    <input type="search" placeholder="Search" className="admin-search-input"/>
-                </div>
+                    <div className="tw-add-button-container">
+                        <p className="tw-rec-name">{sidebarStatus} List</p>
+                        {sidebarStatus === "Users" ? <button onClick={() => setIsOpenUserForm(true)} className="tw-add-button">+ Add User</button> :
+                            <button onClick={() => setIsOpen(true)} className="tw-add-button">+ Add New</button>}
+                    </div>
+                    <div className="tw-generate-button-bar">
+                        <button type="button" onClick={downloadExcel} className="tw-generate-button">Generate Report</button>
+                        <button className="tw-generate-employe-button">Generate Employe Report - Barchart</button>
+                        <button className="tw-pie-chart-button">Benchsale Pie Chart</button>
+                    </div>
+                    <div className="admin-search-input-container">
+                        <h1 className="admin-search-head-element">{sidebarStatus} View</h1>
+                        <input type="search" placeholder="Search" onChange={(e) => setSearchValue(e.target.value)} className="admin-search-input" />
+                    </div>
                 </div>
                 {categoryDataView()}
                 {formPopup()}
                 {dataVewPopup()}
+                {userListFormPopup()}
                 {dataEditPopup()}
             </div>
         </div>

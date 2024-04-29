@@ -1,0 +1,36 @@
+.barchat-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 130px;
+}
+.barchat-main-heading {
+    font-family: roboto;
+    text-align: center;
+}
+.barchat-search-container {
+    display: flex;
+    justify-content: center;
+    margin: 10px;
+}
+.barchat-date {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+.barchat-button {
+    padding: 8px;
+    margin: 10px;
+    border-radius: 5px;
+    background-color: rgb(38, 130, 216);
+    color: white;
+    font-weight: bold;
+    border: none;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.164);
+}
+
+.barchat-button:hover {
+    background-color: rgb(202, 21, 21);
+    color: white;
+}

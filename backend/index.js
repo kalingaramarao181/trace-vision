@@ -77,6 +77,45 @@ app.get('/application/:userId', (req, res) => {
     })
 })
 
+//company-user/
+app.get('/company-user/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "SELECT * FROM userdata WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if(err) return res.json(err) 
+        return res.json(data[0])
+    })
+})
+
+//GET COMPANY USER
+app.get("/company-user", (req, res) => {
+    const sql = "SELECT * FROM userdata"
+    db.query(sql, (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+})
+
+//barchat-data
+app.get("/barchat-data", (req, res) => {
+    const sql = "SELECT * FROM applications"
+    db.query(sql, (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+})
+
+//POST COMPENY USER
+app.post('/company-user', (req, res) => {
+    const {username, email, password, usertype} = req.body
+    const values = [username, email, password, usertype]
+    const sql = "INSERT INTO userdata (`username`, `email`, `password`, `usertype`) VALUES (?)"
+    db.query(sql, [values], (err, data) => {
+        if (err) return res.json(err)
+        return(res.json(data))
+    })
+})
+
 // Route to handle multiple file uploads
 app.post('/form-data', upload.fields([
     { name: 'resume', maxCount: 1 },
@@ -133,11 +172,11 @@ app.put('/update-form/:userId', upload.fields([
         cphone, cssn, cpassport, cdriving, cphoto
     } = req.body;
     
-    const resumePath = req.files['resumefilepath'] ? "uploads/" + req.files['resumefilepath'][0].filename : "";
-    const r2rPath = req.files['r2rfilepath'] ? "uploads/" + req.files['r2rfilepath'][0].filename : "";
-    const drivingPath = req.files['drivinglisencefilepath'] ? "uploads/" + req.files['drivinglisencefilepath'][0].filename : "";
-    const visaPath = req.files['visacopyfilepath'] ? "uploads/" + req.files['visacopyfilepath'][0].filename : "";
-    const msaPath = req.files['msacopyfilepath'] ? "uploads/" + req.files['msacopyfilepath'][0].filename : "";
+    const resumePath = req.files['resumefilepath'] ? "uploads/" + req.files['resumefilepath'][0].filename : req.body.resumefilepath;
+    const r2rPath = req.files['r2rfilepath'] ? "uploads/" + req.files['r2rfilepath'][0].filename : req.body.r2rfilepath;
+    const drivingPath = req.files['drivinglisencefilepath'] ? "uploads/" + req.files['drivinglisencefilepath'][0].filename : req.body.drivinglisencefilepath;
+    const visaPath = req.files['visacopyfilepath'] ? "uploads/" + req.files['visacopyfilepath'][0].filename : req.body.visacopyfilepath;
+    const msaPath = req.files['msacopyfilepath'] ? "uploads/" + req.files['msacopyfilepath'][0].filename : req.body.msacopyfilepath;
 
     console.log(resumePath);
 
@@ -186,6 +225,32 @@ app.put('/update-form/:userId', upload.fields([
 });
 
 
+//update-user-form
+app.put('/update-user-form/:userId', (req, res) => {
+    const { userId } = req.params; // Extract the ID from the URL
+    const { username, email, password, usertype } = req.body;
+    const values = [ username, email, password, usertype, userId];
+    console.log(username, email, password, usertype);
+    const sql = `
+        UPDATE userdata 
+        SET 
+            username = ?, 
+            email = ?, 
+            password = ?, 
+            usertype = ?
+        WHERE id = ?`; // Update query with placeholders for values
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Error updating data:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data updated successfully');
+        res.status(200).json({ message: 'Data updated successfully' });
+    });
+});
+
 //POST TO TRASHBIN
 app.post('/trashbin', (req, res) => {
     const application = req.body;
@@ -206,6 +271,16 @@ app.post('/trashbin', (req, res) => {
 app.delete('/delete-user/:userId', (req, res) => {
     const userId = req.params.userId
     const sql = "DELETE FROM applications WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if(err) return (err)
+        return res.json("User Deleted Successfully")
+    })
+})
+
+//delete-company-user/
+app.delete('/delete-company-user/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "DELETE FROM userdata WHERE id = ?"
     db.query(sql, [userId], (err, data) => {
         if(err) return (err)
         return res.json("User Deleted Successfully")
