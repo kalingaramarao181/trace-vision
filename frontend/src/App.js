@@ -12,7 +12,7 @@ function App() {
       <Switch>
         <Route path='/' exact component={Home} />
         <Route path='/admin' exact component={Admin} />
-        <Route path='/barchat' exact component={Barchats} />
+        <Route path='/barchart' exact component={Barchats} />
       </Switch>
     </BrowserRouter>
   );

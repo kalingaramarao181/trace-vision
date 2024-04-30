@@ -1,5 +1,7 @@
+
 .barchat-container {
     display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     margin-top: 130px;
@@ -19,7 +21,7 @@
     border-radius: 5px;
     font-weight: bold;
 }
-.barchat-button {
+.barchat-button, .barchat-report-button{
     padding: 8px;
     margin: 10px;
     border-radius: 5px;
@@ -29,8 +31,18 @@
     border: none;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.164);
 }
+.barchat-report-button{
+    background-color: rgb(18, 73, 18);
+}
 
 .barchat-button:hover {
     background-color: rgb(202, 21, 21);
     color: white;
+}
+.analytics-repors-heading{
+    text-align: center;
+    font-size: 2vw;
+}
+.submittion-date{
+    color: rgb(76, 76, 245);
 }

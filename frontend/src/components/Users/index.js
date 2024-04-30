@@ -134,6 +134,7 @@ const Users = (props) => {
         await axios.delete(`${baseUrl}delete-company-user/` + userId)
             .then(res => {
                 console.log("User Deleted Successfully")
+                window.location.reload()
             })
             .catch(err => console.log(err))
     }

@@ -3,17 +3,20 @@ import Popup from 'reactjs-popup';
 import axios from "axios";
 import { confirmAlert } from 'react-confirm-alert';
 import Users from "../Users";
+import HotList from "../HotList";
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import * as XLSX from 'xlsx';
 import "./index.css"
 import config from "../config";
 const baseUrl = config.baseUrl
 
-const Admin = () => {
+const Admin = (props) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isOpenUserForm, setIsOpenUserForm] = useState(false);
+    const [isOpenHotForm, setIsOpenHotForm] = useState(false);
+    
     const [isOpenDataView, setIsOpenDataView] = useState(false);
     const [isOpenEditView, setIsOpenEditView] = useState(false);
-    const [isOpenUserForm, setIsOpenUserForm] = useState(false);
     const [applicationData, setApplicationData] = useState([])
     const [companyUserData, setCompanyUserData] = useState([])
     const [editForm, setEditForm] = useState({})
@@ -27,6 +30,7 @@ const Admin = () => {
         r2rPath: "", drivingPath: "", visaPath: "", msaPath: "", cname: "", cemail: "",
         cphone: "", cssn: "", cpassport: "", cdriving: "", cphoto: "",
     })
+    const [hotForm, setHotForm] = useState({})
 
     //GET APPLICATION DATA
     useEffect(() => {
@@ -49,23 +53,33 @@ const Admin = () => {
         })
     }, [])
 
-    //ADDING FORM TEXT
+    //HANDLE RECRUITING AND BENCH FORM TEXT
     const handleFormData = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value })
     }
 
+    //HANDLE HOT FORM TEXT
+    const handleHotFormData = (e) => {
+        setHotForm({...hotForm, [e.target.name]: e.target.value})
+    }
+
+    //HANDLE USER FORM TEXT
     const handleUserFormData = (e) => {
         setFormUser({ ...formUser, [e.target.name]: e.target.value })
     }
 
-    //ADDING FORM FILES
+    //HANDLE RECRUITING AND BENCH FORM FILES
     const handleFileData = (e) => {
         setForm({ ...form, [e.target.name]: e.target.files[0] })
     }
 
+    //HANDLE HOT FORM FILES
+    const handleHotFileData = (e) => {
+        setHotForm({ ...hotForm, [e.target.name]: e.target.files[0]})
+    }
+
     const handleEditFormData = (e) => {
         setEditForm({ ...editForm, [e.target.name]: e.target.value })
-        console.log(editForm);
     }
 
     const handleEditFileData = (e) => {
@@ -77,7 +91,6 @@ const Admin = () => {
     const searchedData = searchedCategory.filter(each => each.recruitername.toLowerCase().includes(searchValue) || each.candidatename.toLowerCase().includes(searchValue))
 
     
-
 
     //*USER CRUD*//
     //USER DATA VIEW
@@ -113,6 +126,7 @@ const Admin = () => {
         await axios.delete(`${baseUrl}delete-user/` + userId)
             .then(res => {
                 console.log("User Deleted Successfully")
+                window.location.reload()
             })
             .catch(err => console.log(err))
     }
@@ -136,9 +150,7 @@ const Admin = () => {
         });
     }
 
-
-
-    //POST FORM DATA
+    //SUBMIT RECRUITING AND BENCH FORM DATA
     const handleSubmit = async (e) => {
         e.preventDefault()
         const formData = new FormData();
@@ -159,6 +171,7 @@ const Admin = () => {
         }
     }
 
+    //SUBMIT STAFF USER FORM
     const handleSubmitUser = (e) => {
         e.preventDefault()
         axios.post(`${baseUrl}company-user`, formUser)
@@ -171,6 +184,29 @@ const Admin = () => {
         })
     }
 
+    //SUBMIT HOT LIST FORM
+    const handleSubmitHot = async (e) => {
+        e.preventDefault()
+        console.log(hotForm);
+        const formData = new FormData();
+        Object.entries(hotForm).forEach(([key, value]) => {
+            formData.append(key, value)
+        });
+
+        try {
+            await axios.post(`${baseUrl}hotlist-form`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            alert('Application submitted successfully');
+            window.location.reload()
+        } catch (error) {
+            console.error('Error submitting application:', error);
+        }
+    }
+
+    //EDIT APPLICATION
     const handleUpdateForm = async (e) => {
         e.preventDefault()
         const formData = new FormData();
@@ -214,69 +250,15 @@ const Admin = () => {
         XLSX.writeFile(wb, `${sidebarStatus}-${searchValue}.xlsx`);
       };
 
-
-    const userListFormPopup = () => {
-        return (
-            <Popup
-                open={isOpenUserForm}
-                onClose={() => setIsOpenUserForm(false)}
-                closeOnDocumentClick
-                contentStyle={{
-                    width: "40vw",
-                    padding: '3.5vw',
-                    borderRadius: '10px',
-                    boxShadow: '0 6px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-                    transition: 'opacity 0.5s ease-in-out', // Transition effect for opacity
-                    backgroundColor: "white",
-                    height: "40vh",
-                    overflowY: "auto",
-                    scrollbarWidth: "none", /* Firefox */
-                }}
-            >
-                {close => (
-                    <div className="tw-admin-popup-container">
-                        <div>
-                            <h1>Application</h1>
-                            <form onSubmit={handleSubmitUser} className="tw-form-container">
-                                <div className="tw-input-pack-container">
-                                    <div className="tw-input-container">
-                                        <label className="tw-label">Name</label>
-                                        <input name="username" onChange={handleUserFormData} type="text" className="tw-input" />
-                                    </div>
-                                    <div className="tw-input-container">
-                                        <label className="tw-label">User Name</label>
-                                        <input name="email" onChange={handleUserFormData} type="text" className="tw-input" />
-                                    </div>
-                                </div>
-                                <div className="tw-input-pack-container">
-                                    <div className="tw-input-container">
-                                        <label className="tw-label">Password</label>
-                                        <input name="password" onChange={handleUserFormData} type="password" className="tw-input" />
-                                    </div>
-                                    <div className="tw-input-container">
-                                        <label className="tw-label">User Type:</label>
-                                        <select name="usertype" onChange={handleUserFormData} className="tw-select">
-                                            <option value="Swain">--Selet User Type--</option>
-                                            <option value="Admin">Admin</option>
-                                            <option value="Staff">Staff</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div className="tw-popup-button-container">
-                                    <button type="submit" className="popup-save">Save</button>
-                                    <button type="button" onClick={() => setIsOpenUserForm(false)} className="popup-close">Close</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                )}
-            </Popup>
-        )
+      //GENERATE REPORT BUTTON
+    const handleGenarateReport = () => {
+        localStorage.setItem("barchartCategoery", sidebarStatus)
+        props.history.push("/barchart")
+        window.location.reload()
     }
 
 
-
-    //FORM POPUP
+    //ADD RECRUITING AND BENCH FORM
     const formPopup = () => {
         return (
             <Popup
@@ -384,6 +366,167 @@ const Admin = () => {
             </Popup>
         )
     }
+
+    //ADD USER FORM
+    const userListFormPopup = () => {
+        return (
+            <Popup
+                open={isOpenUserForm}
+                onClose={() => setIsOpenUserForm(false)}
+                closeOnDocumentClick
+                contentStyle={{
+                    width: "40vw",
+                    padding: '3.5vw',
+                    borderRadius: '10px',
+                    boxShadow: '0 6px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+                    transition: 'opacity 0.5s ease-in-out', // Transition effect for opacity
+                    backgroundColor: "white",
+                    height: "40vh",
+                    overflowY: "auto",
+                    scrollbarWidth: "none", /* Firefox */
+                }}
+            >
+                {close => (
+                    <div className="tw-admin-popup-container">
+                        <div>
+                            <h1>Application</h1>
+                            <form onSubmit={handleSubmitUser} className="tw-form-container">
+                                <div className="tw-input-pack-container">
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">Name</label>
+                                        <input name="username" onChange={handleUserFormData} type="text" className="tw-input" />
+                                    </div>
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">User Name</label>
+                                        <input name="email" onChange={handleUserFormData} type="text" className="tw-input" />
+                                    </div>
+                                </div>
+                                <div className="tw-input-pack-container">
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">Password</label>
+                                        <input name="password" onChange={handleUserFormData} type="password" className="tw-input" />
+                                    </div>
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">User Type:</label>
+                                        <select name="usertype" onChange={handleUserFormData} className="tw-select">
+                                            <option value="Swain">--Selet User Type--</option>
+                                            <option value="Admin">Admin</option>
+                                            <option value="Staff">Staff</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="tw-popup-button-container">
+                                    <button type="submit" className="popup-save">Save</button>
+                                    <button type="button" onClick={() => setIsOpenUserForm(false)} className="popup-close">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+            </Popup>
+        )
+    }
+
+    //ADD HOTLIST FORM
+    const hotFormPopup = () => {
+        return (
+                <Popup
+                    open={isOpenHotForm}
+                    onClose={() => setIsOpenHotForm(false)}
+                    closeOnDocumentClick
+                    contentStyle={{
+                        width: "40vw",
+                        padding: '3.5vw',
+                        borderRadius: '10px',
+                        boxShadow: '0 6px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+                        transition: 'opacity 0.5s ease-in-out', // Transition effect for opacity
+                        backgroundColor: "white",
+                        height: "80vh",
+                        overflowY: "auto",
+                        scrollbarWidth: "none", /* Firefox */
+                    }}
+                >
+                    {close => (
+                        <div className="tw-admin-popup-container">
+                            <div>
+                                <h1>Application</h1>
+                                <form onSubmit={handleSubmitHot} className="tw-form-container">
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">Category:</label>
+                                        <select name="category" onChange={handleHotFormData} className="tw-select" required>
+                                            <option value="">--Select Category--</option>
+                                            <option value="Recruiting">Recruiting</option>
+                                            <option value="Bench">Bench</option>
+                                            <option value="Hot">Hot</option>
+                                            <option value="Jobs">Jobs</option>
+                                            <option value="Prime">Prime</option>
+                                            <option value="Training">Training</option>
+                                            <option value="Interview">Interview</option>
+                                            <option value="CandidateOnboarding">Candidate Onboarding</option>
+                                            <option value="VendorOnboarding">Vendor Onboarding</option>
+                                            <option value="Immigration">Immigration</option>
+                                        </select>
+                                    </div>
+                                    <div className="tw-input-pack-container">
+                                    <div className="tw-input-container">
+                                            <label className="tw-label">Candidate Name</label>
+                                            <input name="candidatename" onChange={handleHotFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Email Address</label>
+                                            <input name="email" onChange={handleHotFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Phone Number</label>
+                                            <input name="phonenumber" onChange={handleHotFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                    </div>
+                                    <div className="tw-input-pack-container">
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Technology</label>
+                                            <input name="technology" onChange={handleHotFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Current Location</label>
+                                            <input name="location" onChange={handleHotFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Visa Status</label>
+                                            <input name="visastatus" onChange={handleHotFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                    </div>
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">Remarks</label>
+                                        <textarea name="remarks" onChange={handleHotFormData} type="text" cols={20} rows={4} className="tw-textarea" required/>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="resume" name="resume" type="file" onChange={handleHotFileData} className="tw-file-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="resume">Resume</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="R2R" name="r2r" type="file" onChange={handleHotFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="R2R">R2R</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="driving" name="driving" type="file" onChange={handleHotFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="driving">Driving Lisense</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="visa" name="visa" type="file" onChange={handleHotFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="visa">Visa Copy</label>
+                                    </div>
+                                    <div className="tw-popup-button-container">
+                                        <button type="submit" className="popup-save">Save</button>
+                                        <button type="button" onClick={() => setIsOpenHotForm(false)} className="popup-close">Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+                </Popup>
+            )
+    }
+
 
     //DATA EDIT POPUP
     const dataEditPopup = () => {
@@ -601,7 +744,25 @@ const Admin = () => {
     else if (sidebarStatus === "Users"){
         return <Users searchValueData={searchValue}/>
     }
+    else if (sidebarStatus === "Hot"){
+        return <HotList searchValueData={searchValue}/>
+    }
+    }
 
+
+    //ADD BUTTONS VIEW
+    const addFormButtonView = () => {
+        switch (sidebarStatus){
+            case "Recruiting":
+            case "Bench":
+                return <button onClick={() => setIsOpen(true)} className="tw-add-button">+ Add New</button>
+            case "Hot":
+                return <button onClick={() => setIsOpenHotForm(true)} className="tw-add-button">+ Add New</button>
+            case "Users":
+                return <button onClick={() => setIsOpenUserForm(true)} className="tw-add-button">+ Add User</button>;
+            default:
+                return <button onClick={() => setIsOpen(true)} className="tw-add-button">+ Add New</button>
+        }
     }
 
     //ACTUAL DATA
@@ -625,13 +786,12 @@ const Admin = () => {
                 <div className="adimin-main-data-top-container">
                     <div className="tw-add-button-container">
                         <p className="tw-rec-name">{sidebarStatus} List</p>
-                        {sidebarStatus === "Users" ? <button onClick={() => setIsOpenUserForm(true)} className="tw-add-button">+ Add User</button> :
-                            <button onClick={() => setIsOpen(true)} className="tw-add-button">+ Add New</button>}
+                        {addFormButtonView()}
                     </div>
                     <div className="tw-generate-button-bar">
                         <button type="button" onClick={downloadExcel} className="tw-generate-button">Generate Report</button>
-                        <button className="tw-generate-employe-button">Generate Employe Report - Barchart</button>
-                        <button className="tw-pie-chart-button">Benchsale Pie Chart</button>
+                        <button onClick={handleGenarateReport} className="tw-generate-employe-button">Generate Employe Report - Barchart</button>
+                        <button onClick={handleGenarateReport} className="tw-pie-chart-button">Benchsale Pie Chart</button>
                     </div>
                     <div className="admin-search-input-container">
                         <h1 className="admin-search-head-element">{sidebarStatus} View</h1>
@@ -642,6 +802,7 @@ const Admin = () => {
                 {formPopup()}
                 {dataVewPopup()}
                 {userListFormPopup()}
+                {hotFormPopup()}
                 {dataEditPopup()}
             </div>
         </div>

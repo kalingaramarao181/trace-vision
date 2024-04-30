@@ -54,7 +54,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
-//GET APPLICATION DATA
+//GET DATA FROM APPLICATIONS (RECRUITING & BENCH)
 app.get('/application-data', (req, res) => {
     // Fetch data from the database
     const sql = 'SELECT * FROM applications';
@@ -67,7 +67,20 @@ app.get('/application-data', (req, res) => {
     });
 });
 
-//GET USER DATA
+//GET DATA FROM HOTLISTAPPLICATION (HOTLIST)
+app.get('/hotlist-application-data', (req, res) => {
+    // Fetch data from the database
+    const sql = 'SELECT * FROM hotlistapplication';
+    db.query(sql, (err, result) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(result);
+    });
+});
+
+//GET DATA FROM APPLICATIONS USING ID (RECRUITING & BENCH)
 app.get('/application/:userId', (req, res) => {
     const userId = req.params.userId
     const sql = "SELECT * FROM applications WHERE id = ?"
@@ -77,7 +90,17 @@ app.get('/application/:userId', (req, res) => {
     })
 })
 
-//company-user/
+//GET DATA FROM HOTLISTAPPLICATION USING ID (HOTLIST)
+app.get('/hotlist-application/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "SELECT * FROM hotlistapplication WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if(err) return res.json(err) 
+        return res.json(data[0])
+    })
+})
+
+//GET DATA FROM USERDATA USING ID (STAFF USER)
 app.get('/company-user/:userId', (req, res) => {
     const userId = req.params.userId
     const sql = "SELECT * FROM userdata WHERE id = ?"
@@ -87,7 +110,7 @@ app.get('/company-user/:userId', (req, res) => {
     })
 })
 
-//GET COMPANY USER
+//GET DATA FROM USERDATA (STAFF USER)
 app.get("/company-user", (req, res) => {
     const sql = "SELECT * FROM userdata"
     db.query(sql, (err, data) => {
@@ -96,16 +119,17 @@ app.get("/company-user", (req, res) => {
     })
 })
 
-//barchat-data
+//GET DATA FROM APPLICATIONS FOR BARCHART (RECRUITING & BENCH)
 app.get("/barchat-data", (req, res) => {
-    const sql = "SELECT * FROM applications"
-    db.query(sql, (err, data) => {
+    const { fromDate, toDate, barchartCategoery } = req.query;
+    const sql = `SELECT * FROM applications WHERE submittiondate BETWEEN ? AND ? AND category = ?`;
+    db.query(sql, [fromDate, toDate, barchartCategoery], (err, data) => {
         if (err) return res.json(err)
         return res.json(data)
     })
 })
 
-//POST COMPENY USER
+//POST TO USERDATA (STAFF USER)
 app.post('/company-user', (req, res) => {
     const {username, email, password, usertype} = req.body
     const values = [username, email, password, usertype]
@@ -116,7 +140,7 @@ app.post('/company-user', (req, res) => {
     })
 })
 
-// Route to handle multiple file uploads
+// POST TO APPLICATIONS (RECRUITING & BENCH)
 app.post('/form-data', upload.fields([
     { name: 'resume', maxCount: 1 },
     { name: 'r2r', maxCount: 1 },
@@ -157,7 +181,35 @@ app.post('/form-data', upload.fields([
     });
 });
 
-//UPDATE APPLICATION
+
+// POST TO HOTLISTAPPLICATION (HOTLIST)
+app.post('/hotlist-form', upload.fields([
+    { name: 'resume', maxCount: 1 },
+    { name: 'r2r', maxCount: 1 },
+    { name: 'driving', maxCount: 1 },
+    { name: 'visa', maxCount: 1 }
+]), (req, res) => {
+    const { category, candidatename, email, phonenumber, technology, location,  visastatus, remarks, resume} = req.body;    
+    const resumePath = req.files['resume'] ? "uploads/" + req.files['resume'][0].filename : "";
+    const r2rPath = req.files['r2r'] ? "uploads/" + req.files['r2r'][0].filename : "";
+    const drivingPath = req.files['driving'] ? "uploads/" + req.files['driving'][0].filename : "";
+    const visaPath = req.files['visa'] ? "uploads/" + req.files['visa'][0].filename : "";
+    const values = [category, candidatename, email, phonenumber, technology, location,  visastatus, remarks, resumePath, r2rPath, drivingPath, visaPath]
+
+    console.log(resume);
+    const sql = 'INSERT INTO hotlistapplication (`category`, `candidatename`, `email`, `phonenumber`, `technology`, `location`, `visastatus`, `remarks`, `resumepath`, `r2rpath`, `drivingpath`, `visapath`) VALUES (?)';
+    db.query(sql, [values], (err, result) => {
+        if (err) {
+            console.error('Error inserting data into database:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data inserted successfully');
+        res.status(201).json({ message: 'Application submitted successfully' });
+    });
+});
+
+//UPDATE APPLICATIONS (RECRUITING & BENCH)
 app.put('/update-form/:userId', upload.fields([
     { name: 'resumefilepath', maxCount: 1 },
     { name: 'r2rfilepath', maxCount: 1 },
@@ -224,8 +276,51 @@ app.put('/update-form/:userId', upload.fields([
     });
 });
 
+//UPDATE HOTLISTAPPLICATION (HOTLIST)
+app.put('/update-hotlist-application/:userId', upload.fields([
+    { name: 'resumepath', maxCount: 1 },
+    { name: 'r2rpath', maxCount: 1 },
+    { name: 'drivingpath', maxCount: 1 },
+    { name: 'visapath', maxCount: 1 },
+]), (req, res) => {
+    const { userId } = req.params; // Extract the ID from the URL
+    const {category, candidatename, email, phonenumber, technology, location,  visastatus, remarks, resume} = req.body;
+    
+    const resumePath = req.files['resumepath'] ? "uploads/" + req.files['resumepath'][0].filename : req.body.resumepath;
+    const r2rPath = req.files['r2rpath'] ? "uploads/" + req.files['r2rpath'][0].filename : req.body.r2rpath;
+    const drivingPath = req.files['drivingpath'] ? "uploads/" + req.files['drivingpath'][0].filename : req.body.drivingpath;
+    const visaPath = req.files['visapath'] ? "uploads/" + req.files['visapath'][0].filename : req.body.visapath;
+    const values = [category, candidatename, email, phonenumber, technology, location,  visastatus, remarks, resumePath, r2rPath, drivingPath, visaPath, userId ];
+    const sql = `
+        UPDATE hotlistapplication
+        SET 
+            category = ?,
+            candidatename = ?, 
+            email = ?, 
+            phonenumber = ?, 
+            technology = ?, 
+            location = ?, 
+            visastatus = ?, 
+            remarks = ?, 
+            resumepath = ?, 
+            r2rpath = ?, 
+            drivingpath = ?, 
+            visapath = ?
+        WHERE id = ?`; // Update query with placeholders for values
 
-//update-user-form
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Error updating data:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data updated successfully');
+        res.status(200).json({ message: 'Data updated successfully' });
+    });
+});
+
+
+//UPDATE USERDATA (STAFF USER)
 app.put('/update-user-form/:userId', (req, res) => {
     const { userId } = req.params; // Extract the ID from the URL
     const { username, email, password, usertype } = req.body;
@@ -251,7 +346,7 @@ app.put('/update-user-form/:userId', (req, res) => {
     });
 });
 
-//POST TO TRASHBIN
+//POST TO TRASHBIN (DELETED DATA)
 app.post('/trashbin', (req, res) => {
     const application = req.body;
     const dbAppData = JSON.stringify(application); // Optionally stringify the data
@@ -267,7 +362,7 @@ app.post('/trashbin', (req, res) => {
 });
 
 
-// DELETE USER
+// DELETE FROM APPLICATIONS (RECRUITING & BENCH)
 app.delete('/delete-user/:userId', (req, res) => {
     const userId = req.params.userId
     const sql = "DELETE FROM applications WHERE id = ?"
@@ -277,7 +372,17 @@ app.delete('/delete-user/:userId', (req, res) => {
     })
 })
 
-//delete-company-user/
+// DELETE FROM HOTLISTAPPLICATION (HOTLIST USER)
+app.delete('/delete-hotlist/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "DELETE FROM hotlistapplication WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if(err) return (err)
+        return res.json("User Deleted Successfully")
+    })
+})
+
+// DELETE FROM USERDATA (STAFF USER)
 app.delete('/delete-company-user/:userId', (req, res) => {
     const userId = req.params.userId
     const sql = "DELETE FROM userdata WHERE id = ?"
@@ -287,38 +392,7 @@ app.delete('/delete-company-user/:userId', (req, res) => {
     })
 })
 
-// Route to fetch data from the database
-app.get('/applications', (req, res) => {
-    // Fetch data from the database
-    const sql = 'SELECT * FROM demo';
-    db.query(sql, (err, result) => {
-        if (err) {
-            console.error('Error fetching data from database:', err);
-            res.status(500).json({ error: err.message });
-            return;
-        }
-        res.json(result);
-        console.log(result);
-    });
-});
 
-
-// Route to handle single file upload
-app.post('/applications', upload.single('file'), (req, res) => {
-    const { name, email, phone } = req.body;
-    const filePath = req.file ? req.file.path : null;
-    console.log('File path:', filePath);
-    const sql = 'INSERT INTO demo (`name`, `email`, `phone`, `file_path`) VALUES (?, ?, ?, ?)';
-    db.query(sql, [name, email, phone, filePath], (err, result) => {
-        if (err) {
-            console.error('Error inserting data into database:', err);
-            res.status(500).json({ error: err.message });
-            return;
-        }
-        console.log('Data inserted successfully');
-        res.status(201).json({ message: 'Application submitted successfully' });
-    });
-});
 
 // SERVER RUNNING STATUS
 const PORT = process.env.PORT || 4001;
