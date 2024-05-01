@@ -1,0 +1,97 @@
+.login-background-img-full {
+    background-image: url("https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA1L2pvYjE4NzItYmFja2dyb3VuZC1zYXZlLTA3Yy5qcGc.jpg");
+    height: 90vh;
+    background-size: cover;
+}
+
+.login-background-img {
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    height: 90vh;
+}
+
+.login-card {
+    background-color: aliceblue;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3vw;
+    border-radius: 7px;
+    padding-top: 1vh;
+    box-shadow: 0 2px 8px 0 rgba(8, 7, 7, 0.2), 0 8px 40px 0 rgba(24, 16, 20, 0.555);
+}
+
+.login-heading {
+    font-family: roboto;
+    padding-bottom: 3vh;
+}
+
+.login-input {
+    padding: 1vw;
+    border: none;
+    margin-bottom: 2vh;
+    border-radius: 0.2vw;
+}
+
+.login-lable {
+    margin-bottom: 1vh;
+    font-size: 2.7vh;
+    font-weight: bold;
+}
+
+.login-button {
+    padding: 1vw;
+    border: none;
+    margin-bottom: 2vh;
+    font-size: 1vw;
+    font-weight: bold;
+    background-color: rgb(68, 68, 209);
+    color: aliceblue;
+}
+
+.main-header-border {
+    display: flex;
+    flex-direction: row;
+    box-shadow: 0 2px 8px 0 rgba(14, 13, 13, 0.678), 0 4px 20px 0 rgba(0, 0, 0, 0.603);
+    justify-content: space-around;
+}
+
+.home-e2e-heading {
+    color: white;
+}
+
+.home-e2e-heading2 {
+    color: white;
+}
+
+.home-login-button {
+    height: 6vh;
+    width: 6vw;
+    margin-top: 2vh;
+    border: none;
+    background-color: rgb(68, 68, 209);
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 18px;
+    color: white;
+}
+
+.home-login-button:hover {
+    height: 6vh;
+    width: 6vw;
+    margin-top: 2vh;
+    border: none;
+    background-color: #f09e07;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 18px;
+    color: white;
+}
+.home-container {
+    background-color: #0669cc;
+    box-shadow: 0 2px 8px 0 rgba(14, 13, 13, 0.678), 0 4px 20px 0 rgba(0, 0, 0, 0.603);
+
+}

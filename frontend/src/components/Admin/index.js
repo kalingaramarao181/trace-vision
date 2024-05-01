@@ -8,12 +8,22 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import * as XLSX from 'xlsx';
 import "./index.css"
 import config from "../config";
+import Jobs from "../Jobs";
+import Prime from "../Prime";
+import Clients from "../Clients";
+import Candidate from "../Candidates";
 const baseUrl = config.baseUrl
 
 const Admin = (props) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenUserForm, setIsOpenUserForm] = useState(false);
     const [isOpenHotForm, setIsOpenHotForm] = useState(false);
+    const [isOpenJobsForm, setIsOpenJobsForm] = useState(false);
+    const [isOpenPrimeForm, setIsOpenPrimeForm] = useState(false);
+    const [isOpenClientsForm, setIsOpenClientsForm] = useState(false);
+    const [isOpenCandidatesForm, setIsOpenCandidatesForm] = useState(false);
+
+
     
     const [isOpenDataView, setIsOpenDataView] = useState(false);
     const [isOpenEditView, setIsOpenEditView] = useState(false);
@@ -23,6 +33,7 @@ const Admin = (props) => {
     const [searchValue, setSearchValue] = useState("")
     const [viewData, setViewData] = useState({})
     const [sidebarStatus, setSidebarStatus] = useState("Recruiting")
+
     const [formUser, setFormUser] = useState({})
     const [form, setForm] = useState({
         recruiter: "", category: "", recruiterid: "1234", candidatename: "",
@@ -31,6 +42,13 @@ const Admin = (props) => {
         cphone: "", cssn: "", cpassport: "", cdriving: "", cphoto: "",
     })
     const [hotForm, setHotForm] = useState({})
+    const [jobsForm, setJobsForm] = useState({})
+    const [primeForm, setPrimeForm] = useState({})
+    const [clientsForm, setClientsForm] = useState({})
+    const [candidatesForm, setCandidatesForm] = useState({})
+
+
+
 
     //GET APPLICATION DATA
     useEffect(() => {
@@ -63,10 +81,32 @@ const Admin = (props) => {
         setHotForm({...hotForm, [e.target.name]: e.target.value})
     }
 
+    //HANDLE JOBS FORM TEXT
+    const handleJobsFormData = (e) => {
+        setJobsForm({...primeForm, [e.target.name]: e.target.value})
+    }
+
+    //HANDLE PRIME FORM TEXT
+    const handlePrimeFormData = (e) => {
+        setPrimeForm({...primeForm, [e.target.name]: e.target.value})
+    }
+
+    //HANDLE CLIENTS FORM TEXT
+    const handleClientsFormData = (e) => {
+        setClientsForm({...clientsForm, [e.target.name]: e.target.value})
+    }
+
+    //HANDLE CANDIDATES FORM TEXT
+    const handleCandidatesFormData = (e) => {
+        setCandidatesForm({...candidatesForm, [e.target.name]: e.target.value})
+    }
+
     //HANDLE USER FORM TEXT
     const handleUserFormData = (e) => {
         setFormUser({ ...formUser, [e.target.name]: e.target.value })
     }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //HANDLE RECRUITING AND BENCH FORM FILES
     const handleFileData = (e) => {
@@ -77,6 +117,19 @@ const Admin = (props) => {
     const handleHotFileData = (e) => {
         setHotForm({ ...hotForm, [e.target.name]: e.target.files[0]})
     }
+
+    //HANDLE PRIME FORM FILES
+    const handlePrimeFileData = (e) => {
+        setPrimeForm({ ...primeForm, [e.target.name]: e.target.files[0]})
+    }
+
+    //HANDLE CANDIDATES FORM FILES
+    const handleCandidatesFileData = (e) => {
+        setCandidatesForm({ ...candidatesForm, [e.target.name]: e.target.files[0]})
+    }
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleEditFormData = (e) => {
         setEditForm({ ...editForm, [e.target.name]: e.target.value })
@@ -187,7 +240,6 @@ const Admin = (props) => {
     //SUBMIT HOT LIST FORM
     const handleSubmitHot = async (e) => {
         e.preventDefault()
-        console.log(hotForm);
         const formData = new FormData();
         Object.entries(hotForm).forEach(([key, value]) => {
             formData.append(key, value)
@@ -195,6 +247,74 @@ const Admin = (props) => {
 
         try {
             await axios.post(`${baseUrl}hotlist-form`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            alert('Application submitted successfully');
+            window.location.reload()
+        } catch (error) {
+            console.error('Error submitting application:', error);
+        }
+    }
+
+    //SUBMIT JOBS FORM
+    const handleSubmitJobs = async (e) => {
+        e.preventDefault()
+        const formData = jobsForm
+        try {
+            await axios.post(`${baseUrl}jobs-form`, formData);
+            alert('Application submitted successfully');
+            window.location.reload()
+        } catch (error) {
+            console.error('Error submitting application:', error);
+        }
+    }
+
+    //SUBMIT PRIME FORM
+    const handleSubmitPrime = async (e) => {
+        e.preventDefault()
+        const formData = new FormData();
+        Object.entries(primeForm).forEach(([key, value]) => {
+            formData.append(key, value)
+        });
+
+        try {
+            await axios.post(`${baseUrl}prime-form`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            alert('Application submitted successfully');
+            window.location.reload()
+        } catch (error) {
+            console.error('Error submitting application:', error);
+        }
+    }
+
+    //SUBMIT CLIENTS FORM
+    const handleSubmitClients = async (e) => {
+        e.preventDefault()
+        const formData = clientsForm
+        try {
+            await axios.post(`${baseUrl}clients-form`, formData);
+            alert('Application submitted successfully');
+            window.location.reload()
+        } catch (error) {
+            console.error('Error submitting application:', error);
+        }
+    }
+
+    //SUBMIT CANDIDATES LIST FORM
+    const handleSubmitCandidates = async (e) => {
+        e.preventDefault()
+        const formData = new FormData();
+        Object.entries(candidatesForm).forEach(([key, value]) => {
+            formData.append(key, value)
+        });
+
+        try {
+            await axios.post(`${baseUrl}candidates-form`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -257,6 +377,9 @@ const Admin = (props) => {
         window.location.reload()
     }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//+ADD FORMS
 
     //ADD RECRUITING AND BENCH FORM
     const formPopup = () => {
@@ -527,6 +650,380 @@ const Admin = (props) => {
             )
     }
 
+    //ADD JOBS FORM
+    const jobsFormPopup = () => {
+        return (
+                <Popup
+                    open={isOpenJobsForm}
+                    onClose={() => setIsOpenJobsForm(false)}
+                    closeOnDocumentClick
+                    contentStyle={{
+                        width: "40vw",
+                        padding: '3.5vw',
+                        borderRadius: '10px',
+                        boxShadow: '0 6px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+                        transition: 'opacity 0.5s ease-in-out', // Transition effect for opacity
+                        backgroundColor: "white",
+                        height: "80vh",
+                        overflowY: "auto",
+                        scrollbarWidth: "none", /* Firefox */
+                    }}
+                >
+                    {close => (
+                        <div className="tw-admin-popup-container">
+                            <div>
+                                <h1>Application</h1>
+                                <form onSubmit={handleSubmitJobs} className="tw-form-container">
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">Category:</label>
+                                        <select name="category" onChange={handleJobsFormData} className="tw-select" required>
+                                            <option value="">--Select Category--</option>
+                                            <option value="Recruiting">Recruiting</option>
+                                            <option value="Bench">Bench</option>
+                                            <option value="Hot">Hot</option>
+                                            <option value="Jobs">Jobs</option>
+                                            <option value="Prime">Prime</option>
+                                            <option value="Training">Training</option>
+                                            <option value="Interview">Interview</option>
+                                            <option value="CandidateOnboarding">Candidate Onboarding</option>
+                                            <option value="VendorOnboarding">Vendor Onboarding</option>
+                                            <option value="Immigration">Immigration</option>
+                                        </select>
+                                    </div>
+                                    <div className="tw-input-pack-container">
+                                    <div className="tw-input-container">
+                                            <label className="tw-label">Recruitment Date</label>
+                                            <input name="recruitmentdate" onChange={handleJobsFormData} type="date" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Position Title</label>
+                                            <input name="positiontitle" onChange={handleJobsFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Client Name</label>
+                                            <input name="clientname" onChange={handleJobsFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                    </div>
+                                    <div className="tw-input-pack-container">
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Recruiter Name</label>
+                                            <input name="recruitername" onChange={handleJobsFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Location</label>
+                                            <input name="location" onChange={handleJobsFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Job Descreption</label>
+                                            <input name="jobdescription" onChange={handleJobsFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                    </div>
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">Notes</label>
+                                        <textarea name="notes" onChange={handleJobsFormData} type="text" cols={20} rows={4} className="tw-textarea" required/>
+                                    </div>
+                                    <div className="tw-popup-button-container">
+                                        <button type="submit" className="popup-save">Save</button>
+                                        <button type="button" onClick={() => setIsOpenJobsForm(false)} className="popup-close">Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+                </Popup>
+            )
+    }
+
+    //ADD Prime FORM
+    const primeFormPopup = () => {
+        return (
+                <Popup
+                    open={isOpenPrimeForm}
+                    onClose={() => setIsOpenPrimeForm(false)}
+                    closeOnDocumentClick
+                    contentStyle={{
+                        width: "40vw",
+                        padding: '3.5vw',
+                        borderRadius: '10px',
+                        boxShadow: '0 6px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+                        transition: 'opacity 0.5s ease-in-out', // Transition effect for opacity
+                        backgroundColor: "white",
+                        height: "80vh",
+                        overflowY: "auto",
+                        scrollbarWidth: "none", /* Firefox */
+                    }}
+                >
+                    {close => (
+                        <div className="tw-admin-popup-container">
+                            <div>
+                                <h1>Application</h1>
+                                <form onSubmit={handleSubmitPrime} className="tw-form-container">
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">Category:</label>
+                                        <select name="category" onChange={handlePrimeFormData} className="tw-select" required>
+                                            <option value="">--Select Category--</option>
+                                            <option value="Recruiting">Recruiting</option>
+                                            <option value="Bench">Bench</option>
+                                            <option value="Hot">Hot</option>
+                                            <option value="Jobs">Jobs</option>
+                                            <option value="Prime">Prime</option>
+                                            <option value="Training">Training</option>
+                                            <option value="Interview">Interview</option>
+                                            <option value="CandidateOnboarding">Candidate Onboarding</option>
+                                            <option value="VendorOnboarding">Vendor Onboarding</option>
+                                            <option value="Immigration">Immigration</option>
+                                        </select>
+                                    </div>
+                                    <div className="tw-input-pack-container">
+                                    <div className="tw-input-container">
+                                            <label className="tw-label">Vender Compeny</label>
+                                            <input name="vendercompany" onChange={handlePrimeFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Recruiter Name</label>
+                                            <input name="recruitername" onChange={handlePrimeFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Phone Number</label>
+                                            <input name="phonenumber" onChange={handlePrimeFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                    </div>
+                                    <div className="tw-input-pack-container">
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Email</label>
+                                            <input name="email" onChange={handlePrimeFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Fax Number</label>
+                                            <input name="faxnumber" onChange={handlePrimeFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Company Address</label>
+                                            <input name="companyaddress" onChange={handlePrimeFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                    </div>
+                                    <div className="tw-input-container">
+                                            <label className="tw-label">Branch Location</label>
+                                            <input name="branchlocation" onChange={handlePrimeFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">Notes</label>
+                                        <textarea name="notes" onChange={handlePrimeFormData} type="text" cols={20} rows={4} className="tw-textarea" required/>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="msa" name="msa" type="file" onChange={handlePrimeFileData} className="tw-file-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="msa">MSA</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="po" name="po" type="file" onChange={handlePrimeFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="po">PO</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="coi" name="coi" type="file" onChange={handlePrimeFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="coi">COI</label>
+                                    </div>
+                                    <div className="tw-popup-button-container">
+                                        <button type="submit" className="popup-save">Save</button>
+                                        <button type="button" onClick={() => setIsOpenPrimeForm(false)} className="popup-close">Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+                </Popup>
+            )
+    }
+
+    //ADD JOBS FORM
+    const clientsFormPopup = () => {
+        return (
+                <Popup
+                    open={isOpenClientsForm}
+                    onClose={() => setIsOpenClientsForm(false)}
+                    closeOnDocumentClick
+                    contentStyle={{
+                        width: "40vw",
+                        padding: '3.5vw',
+                        borderRadius: '10px',
+                        boxShadow: '0 6px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+                        transition: 'opacity 0.5s ease-in-out', // Transition effect for opacity
+                        backgroundColor: "white",
+                        height: "80vh",
+                        overflowY: "auto",
+                        scrollbarWidth: "none", /* Firefox */
+                    }}
+                >
+                    {close => (
+                        <div className="tw-admin-popup-container">
+                            <div>
+                                <h1>Application</h1>
+                                <form onSubmit={handleSubmitClients} className="tw-form-container">
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">Category:</label>
+                                        <select name="category" onChange={handleClientsFormData} className="tw-select" required>
+                                            <option value="">--Select Category--</option>
+                                            <option value="Recruiting">Recruiting</option>
+                                            <option value="Bench">Bench</option>
+                                            <option value="Hot">Hot</option>
+                                            <option value="Jobs">Jobs</option>
+                                            <option value="Prime">Prime</option>
+                                            <option value="Clients">Clients</option>
+                                            <option value="Training">Training</option>
+                                            <option value="Interview">Interview</option>
+                                            <option value="CandidateOnboarding">Candidate Onboarding</option>
+                                            <option value="VendorOnboarding">Vendor Onboarding</option>
+                                            <option value="Immigration">Immigration</option>
+                                        </select>
+                                    </div>
+                                    <div className="tw-input-pack-container">
+                                    <div className="tw-input-container">
+                                            <label className="tw-label">Client Name</label>
+                                            <input name="clientname" onChange={handleClientsFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Client Website</label>
+                                            <input name="clientwebsite" onChange={handleClientsFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Recruiter Name</label>
+                                            <input name="recruitername" onChange={handleClientsFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                    </div>
+                                    <div className="tw-input-pack-container">
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Recruiter Email</label>
+                                            <input name="recruiteremailid" onChange={handleClientsFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Recruiter Phone Number</label>
+                                            <input name="recruitercontactnumber" onChange={handleClientsFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Job Portel Link</label>
+                                            <input name="jobportellink" onChange={handleClientsFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                    </div>
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">Notes</label>
+                                        <textarea name="notes" onChange={handleClientsFormData} type="text" cols={20} rows={4} className="tw-textarea" required/>
+                                    </div>
+                                    <div className="tw-popup-button-container">
+                                        <button type="submit" className="popup-save">Save</button>
+                                        <button type="button" onClick={() => setIsOpenClientsForm(false)} className="popup-close">Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+                </Popup>
+            )
+    }
+
+    //ADD CANDIDATE FORM
+    const candidatesFormPopup = () => {
+        return (
+                <Popup
+                    open={isOpenCandidatesForm}
+                    onClose={() => setIsOpenCandidatesForm(false)}
+                    closeOnDocumentClick
+                    contentStyle={{
+                        width: "40vw",
+                        padding: '3.5vw',
+                        borderRadius: '10px',
+                        boxShadow: '0 6px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+                        transition: 'opacity 0.5s ease-in-out', // Transition effect for opacity
+                        backgroundColor: "white",
+                        height: "80vh",
+                        overflowY: "auto",
+                        scrollbarWidth: "none", /* Firefox */
+                    }}
+                >
+                    {close => (
+                        <div className="tw-admin-popup-container">
+                            <div>
+                                <h1>Application</h1>
+                                <form onSubmit={handleSubmitCandidates} className="tw-form-container">
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">Category:</label>
+                                        <select name="category" onChange={handleCandidatesFormData} className="tw-select" required>
+                                            <option value="">--Select Category--</option>
+                                            <option value="Recruiting">Recruiting</option>
+                                            <option value="Bench">Bench</option>
+                                            <option value="Hot">Hot</option>
+                                            <option value="Jobs">Jobs</option>
+                                            <option value="Prime">Prime</option>
+                                            <option value="Clients">Clients</option>
+                                            <option value="Candidates">Candidates</option>
+                                            <option value="Training">Training</option>
+                                            <option value="Interview">Interview</option>
+                                            <option value="CandidateOnboarding">Candidate Onboarding</option>
+                                            <option value="VendorOnboarding">Vendor Onboarding</option>
+                                            <option value="Immigration">Immigration</option>
+                                        </select>
+                                    </div>
+                                    <div className="tw-input-pack-container">
+                                    <div className="tw-input-container">
+                                            <label className="tw-label">Submittion Date</label>
+                                            <input name="submittiondate" onChange={handleCandidatesFormData} type="DATE" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Candidate Name</label>
+                                            <input name="candidatename" onChange={handleCandidatesFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Email Id</label>
+                                            <input name="emailid" onChange={handleCandidatesFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                    </div>
+                                    <div className="tw-input-pack-container">
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Phone Number</label>
+                                            <input name="phonenumber" onChange={handleCandidatesFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Position Title</label>
+                                            <input name="positiontitle" onChange={handleCandidatesFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Visa Status</label>
+                                            <input name="visastatus" onChange={handleCandidatesFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                    </div>
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">Notes</label>
+                                        <textarea name="notes" onChange={handleCandidatesFormData} type="text" cols={20} rows={4} className="tw-textarea" required/>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="resume" name="resume" type="file" onChange={handleCandidatesFileData} className="tw-file-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="resume">Resume</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="R2R" name="r2r" type="file" onChange={handleCandidatesFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="R2R">R2R</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="driving" name="driving" type="file" onChange={handleCandidatesFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="driving">Driving Lisense</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="visa" name="visa" type="file" onChange={handleCandidatesFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="visa">Visa Copy</label>
+                                    </div>
+                                    <div className="tw-popup-button-container">
+                                        <button type="submit" className="popup-save">Save</button>
+                                        <button type="button" onClick={() => setIsOpenCandidatesForm(false)} className="popup-close">Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+                </Popup>
+            )
+    }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//APPLICATION CRUD POPUPS
 
     //DATA EDIT POPUP
     const dataEditPopup = () => {
@@ -746,6 +1243,14 @@ const Admin = (props) => {
     }
     else if (sidebarStatus === "Hot"){
         return <HotList searchValueData={searchValue}/>
+    }else if (sidebarStatus === "Jobs"){
+        return <Jobs searchValueData={searchValue}/>
+    }else if (sidebarStatus === "Prime"){
+        return <Prime searchValueData={searchValue}/>
+    }else if (sidebarStatus === "Clients"){
+        return <Clients searchValueData={searchValue}/>
+    }else if (sidebarStatus === "Candidates"){
+        return <Candidate searchValueData={searchValue}/>
     }
     }
 
@@ -758,6 +1263,14 @@ const Admin = (props) => {
                 return <button onClick={() => setIsOpen(true)} className="tw-add-button">+ Add New</button>
             case "Hot":
                 return <button onClick={() => setIsOpenHotForm(true)} className="tw-add-button">+ Add New</button>
+            case "Jobs":
+                return <button onClick={() => setIsOpenJobsForm(true)} className="tw-add-button">+ Add User</button>;
+            case "Prime":
+                return <button onClick={() => setIsOpenPrimeForm(true)} className="tw-add-button">+ Add User</button>;
+            case "Clients":
+                return <button onClick={() => setIsOpenClientsForm(true)} className="tw-add-button">+ Add User</button>;
+            case "Candidates":
+                return <button onClick={() => setIsOpenCandidatesForm(true)} className="tw-add-button">+ Add User</button>;
             case "Users":
                 return <button onClick={() => setIsOpenUserForm(true)} className="tw-add-button">+ Add User</button>;
             default:
@@ -774,11 +1287,11 @@ const Admin = (props) => {
                 <button style={{ backgroundColor: sidebarStatus === "Hot" && "#0E0C49" }} onClick={() => setSidebarStatus("Hot")} className="admin-sidebar-button">Hot</button>
                 <button style={{ backgroundColor: sidebarStatus === "Jobs" && "#0E0C49" }} onClick={() => setSidebarStatus("Jobs")} className="admin-sidebar-button">Jobs</button>
                 <button style={{ backgroundColor: sidebarStatus === "Prime" && "#0E0C49" }} onClick={() => setSidebarStatus("Prime")} className="admin-sidebar-button">Prime </button>
+                <button style={{ backgroundColor: sidebarStatus === "Clients" && "#0E0C49" }} onClick={() => setSidebarStatus("Clients")} className="admin-sidebar-button">Clients</button>
                 <button style={{ backgroundColor: sidebarStatus === "Candidates" && "#0E0C49" }} onClick={() => setSidebarStatus("Candidates")} className="admin-sidebar-button">Candidates</button>
                 <button style={{ backgroundColor: sidebarStatus === "Training" && "#0E0C49" }} onClick={() => setSidebarStatus("Training")} className="admin-sidebar-button">Training</button>
                 <button style={{ backgroundColor: sidebarStatus === "Interview" && "#0E0C49" }} onClick={() => setSidebarStatus("Interview")} className="admin-sidebar-button">Interview</button>
                 <button style={{ backgroundColor: sidebarStatus === "CandidateOnboarding" && "#0E0C49" }} onClick={() => setSidebarStatus("CandidateOnboarding")} className="admin-sidebar-button">Candidate Onboarding</button>
-                <button style={{ backgroundColor: sidebarStatus === "VendorOnboarding" && "#0E0C49" }} onClick={() => setSidebarStatus("VendorOnboarding")} className="admin-sidebar-button">Vendor Onboarding</button>
                 <button style={{ backgroundColor: sidebarStatus === "Status" && "#0E0C49" }} onClick={() => setSidebarStatus("Status")} className="admin-sidebar-button">Status </button>
                 <button style={{ backgroundColor: sidebarStatus === "Users" && "#0E0C49" }} onClick={() => setSidebarStatus("Users")} className="admin-sidebar-button">Users</button>
             </div>
@@ -803,6 +1316,10 @@ const Admin = (props) => {
                 {dataVewPopup()}
                 {userListFormPopup()}
                 {hotFormPopup()}
+                {jobsFormPopup()}
+                {primeFormPopup()}
+                {clientsFormPopup()}
+                {candidatesFormPopup()}
                 {dataEditPopup()}
             </div>
         </div>

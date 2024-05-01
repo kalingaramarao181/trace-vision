@@ -1,0 +1,37 @@
+.home-container {
+    background-image: url("https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA1L2pvYjE4NzItYmFja2dyb3VuZC1zYXZlLTA3Yy5qcGc.jpg");
+    height: 90vh;
+    background-size: cover;
+}
+
+.home-e2e-heading2 {
+    color: white;
+}
+.home-span-head {
+    color: #f09e07;
+    font-weight: bold;
+    font-size: 3vw;
+}
+.home-content-container {
+    color: white;
+
+}
+.home-full-content-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 40px;
+}
+.home-image-logo {
+    height: 50vh;
+    align-self: flex-start;
+}
+.home-all-paragraph {
+    font-size: 1.4vw;
+    font-weight: bold;
+    text-decoration: none;
+    margin-top: 1.5vw;
+    margin: 20px;
+}
+

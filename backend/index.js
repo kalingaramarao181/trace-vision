@@ -53,6 +53,24 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+//ADMIN LOGIN
+app.post("/login", (req, res) => {
+    const { username, password } = req.body;
+    const sql = `SELECT * FROM login WHERE name = '${username}'`;
+    db.query(sql, (err, data) => {
+        if (data.length === 0) {
+            res.json(false)
+        } else {
+            if (data[0].password === password) {
+                res.json(true)
+
+            } else {
+                res.json(false)
+            }
+        }
+    })
+})
+
 
 //GET DATA FROM APPLICATIONS (RECRUITING & BENCH)
 app.get('/application-data', (req, res) => {
@@ -80,12 +98,64 @@ app.get('/hotlist-application-data', (req, res) => {
     });
 });
 
+//GET DATA FROM JOBS (JOBS)
+app.get('/jobs-application-data', (req, res) => {
+    // Fetch data from the database
+    const sql = 'SELECT * FROM jobs';
+    db.query(sql, (err, result) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(result);
+    });
+});
+
+//GET DATA FROM PRIME (PRIME)
+app.get('/prime-application-data', (req, res) => {
+    // Fetch data from the database
+    const sql = 'SELECT * FROM primevenders';
+    db.query(sql, (err, result) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(result);
+    });
+});
+
+//GET DATA FROM CLIENTS (CLIENTS)
+app.get('/clients-application-data', (req, res) => {
+    // Fetch data from the database
+    const sql = 'SELECT * FROM clients';
+    db.query(sql, (err, result) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(result);
+    });
+});
+
+//GET DATA FROM CANDIDATES (HOTLIST)
+app.get('/candidates-application-data', (req, res) => {
+    // Fetch data from the database
+    const sql = 'SELECT * FROM candidates';
+    db.query(sql, (err, result) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(result);
+    });
+});
+
 //GET DATA FROM APPLICATIONS USING ID (RECRUITING & BENCH)
 app.get('/application/:userId', (req, res) => {
     const userId = req.params.userId
     const sql = "SELECT * FROM applications WHERE id = ?"
     db.query(sql, [userId], (err, data) => {
-        if(err) return res.json(err) 
+        if (err) return res.json(err)
         return res.json(data[0])
     })
 })
@@ -95,7 +165,47 @@ app.get('/hotlist-application/:userId', (req, res) => {
     const userId = req.params.userId
     const sql = "SELECT * FROM hotlistapplication WHERE id = ?"
     db.query(sql, [userId], (err, data) => {
-        if(err) return res.json(err) 
+        if (err) return res.json(err)
+        return res.json(data[0])
+    })
+})
+
+//GET DATA FROM JOBS USING ID (JOBS)
+app.get('/jobs-application/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "SELECT * FROM jobs WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data[0])
+    })
+})
+
+//GET DATA FROM CLIENTS USING ID (CLIENTS)
+app.get('/clients-application/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "SELECT * FROM clients WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data[0])
+    })
+})
+
+//GET DATA FROM PRIME USING ID (PRIME)
+app.get('/prime-application/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "SELECT * FROM primevenders WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data[0])
+    })
+})
+
+//GET DATA FROM CANDIDATES USING ID (CANDIDATES)
+app.get('/candidates-application/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "SELECT * FROM candidates WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) return res.json(err)
         return res.json(data[0])
     })
 })
@@ -105,7 +215,7 @@ app.get('/company-user/:userId', (req, res) => {
     const userId = req.params.userId
     const sql = "SELECT * FROM userdata WHERE id = ?"
     db.query(sql, [userId], (err, data) => {
-        if(err) return res.json(err) 
+        if (err) return res.json(err)
         return res.json(data[0])
     })
 })
@@ -131,12 +241,12 @@ app.get("/barchat-data", (req, res) => {
 
 //POST TO USERDATA (STAFF USER)
 app.post('/company-user', (req, res) => {
-    const {username, email, password, usertype} = req.body
+    const { username, email, password, usertype } = req.body
     const values = [username, email, password, usertype]
     const sql = "INSERT INTO userdata (`username`, `email`, `password`, `usertype`) VALUES (?)"
     db.query(sql, [values], (err, data) => {
         if (err) return res.json(err)
-        return(res.json(data))
+        return (res.json(data))
     })
 })
 
@@ -148,14 +258,14 @@ app.post('/form-data', upload.fields([
     { name: 'visa', maxCount: 1 },
     { name: 'msa', maxCount: 1 }
 ]), (req, res) => {
-    const { 
+    const {
         category, recruiter, recruiterid, date, candidatename,
-        clientname, pocname, feedback, remarks, cname, cemail, 
+        clientname, pocname, feedback, remarks, cname, cemail,
         cphone, cssn, cpassport, cdriving, cphoto
     } = req.body;
 
     console.log(req.files['resume']);
-    
+
     const resumePath = req.files['resume'] ? "uploads/" + req.files['resume'][0].filename : "";
     const r2rPath = req.files['r2r'] ? "uploads/" + req.files['r2r'][0].filename : "";
     const drivingPath = req.files['driving'] ? "uploads/" + req.files['driving'][0].filename : "";
@@ -163,12 +273,12 @@ app.post('/form-data', upload.fields([
     const msaPath = req.files['msa'] ? "uploads/" + req.files['msa'][0].filename : "";
 
     const values = [
-        recruiter, category, recruiterid, candidatename, 
-        date, clientname, pocname, feedback, remarks, resumePath, 
+        recruiter, category, recruiterid, candidatename,
+        date, clientname, pocname, feedback, remarks, resumePath,
         r2rPath, drivingPath, visaPath, msaPath, cname, cemail,
         cphone, cssn, cpassport, cdriving, cphoto
     ]
-    
+
     const sql = 'INSERT INTO applications (`recruitername`, `category`, `recruiterid`, `candidatename`, `submittiondate`, `clientname`, `pocname`, `feedback`, `remarks`, `resumefilepath`, `r2rfilepath`, `drivinglisencefilepath`, `visacopyfilepath`, `msacopyfilepath`, `cname`, `cemail`, `cphone`, `cssn`, `cpassport`, `cdriving`, `cphoto`) VALUES (?)';
     db.query(sql, [values], (err, result) => {
         if (err) {
@@ -189,15 +299,97 @@ app.post('/hotlist-form', upload.fields([
     { name: 'driving', maxCount: 1 },
     { name: 'visa', maxCount: 1 }
 ]), (req, res) => {
-    const { category, candidatename, email, phonenumber, technology, location,  visastatus, remarks, resume} = req.body;    
+    const { category, candidatename, email, phonenumber, technology, location, visastatus, remarks, resume } = req.body;
     const resumePath = req.files['resume'] ? "uploads/" + req.files['resume'][0].filename : "";
     const r2rPath = req.files['r2r'] ? "uploads/" + req.files['r2r'][0].filename : "";
     const drivingPath = req.files['driving'] ? "uploads/" + req.files['driving'][0].filename : "";
     const visaPath = req.files['visa'] ? "uploads/" + req.files['visa'][0].filename : "";
-    const values = [category, candidatename, email, phonenumber, technology, location,  visastatus, remarks, resumePath, r2rPath, drivingPath, visaPath]
+    const values = [category, candidatename, email, phonenumber, technology, location, visastatus, remarks, resumePath, r2rPath, drivingPath, visaPath]
 
     console.log(resume);
     const sql = 'INSERT INTO hotlistapplication (`category`, `candidatename`, `email`, `phonenumber`, `technology`, `location`, `visastatus`, `remarks`, `resumepath`, `r2rpath`, `drivingpath`, `visapath`) VALUES (?)';
+    db.query(sql, [values], (err, result) => {
+        if (err) {
+            console.error('Error inserting data into database:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data inserted successfully');
+        res.status(201).json({ message: 'Application submitted successfully' });
+    });
+});
+
+// POST TO JOBS (JOBS)
+app.post('/jobs-form', (req, res) => {
+    const {category, recruitmentdate, positiontitle, clientname, recruitername, location, jobdescription, notes } = req.body;
+    const values = [category, recruitmentdate, positiontitle, clientname, recruitername, location, jobdescription, notes]
+    const sql = 'INSERT INTO jobs (`category`, `recruitmentdate`, `positiontitle`, `clientname`, `recruitername`, `location`, `jobdescription`, `notes`) VALUES (?)';
+    db.query(sql, [values], (err, result) => {
+        if (err) {
+            console.error('Error inserting data into database:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data inserted successfully');
+        res.status(201).json({ message: 'Application submitted successfully' });
+    });
+});
+
+// POST TO PRIME (PRIME)
+app.post('/prime-form', upload.fields([
+    { name: 'msa', maxCount: 1 },
+    { name: 'po', maxCount: 1 },
+    { name: 'coi', maxCount: 1 }
+]), (req, res) => {
+    const { category, vendercompany, recruitername, phonenumber, email, faxnumber, companyaddress, branchlocation, notes } = req.body;
+    const msaPath = req.files['msa'] ? "uploads/" + req.files['msa'][0].filename : "";
+    const poPath = req.files['po'] ? "uploads/" + req.files['po'][0].filename : "";
+    const coiPath = req.files['coi'] ? "uploads/" + req.files['coi'][0].filename : "";
+    const values = [category, vendercompany, recruitername, phonenumber, email, faxnumber, companyaddress, branchlocation, notes, msaPath, poPath, coiPath]
+
+    const sql = 'INSERT INTO primevenders (`category`, `vendorcompany`, `recruitername`, `phonenumber`, `email`, `faxnumber`, `companyaddress`, `branchlocation`, `notes`, `msapath`, `popath`, `coipath`) VALUES (?)';
+    db.query(sql, [values], (err, result) => {
+        if (err) {
+            console.error('Error inserting data into database:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data inserted successfully');
+        res.status(201).json({ message: 'Application submitted successfully' });
+    });
+});
+
+// POST TO CLIENTS (CLIENTS)
+app.post('/clients-form', (req, res) => {
+    const {category, clientname, clientwebsite, recruitername, recruiteremailid, recruitercontactnumber, jobportellink, notes } = req.body;
+    const values = [category, clientname, clientwebsite, recruitername, recruiteremailid, recruitercontactnumber, jobportellink, notes]
+    const sql = 'INSERT INTO clients (`category`, `clientname`, `clientwebsite`, `recruitername`, `recruiteremailid`, `recruitercontactnumber`, `jobportallink`, `notes`) VALUES (?)';
+    db.query(sql, [values], (err, result) => {
+        if (err) {
+            console.error('Error inserting data into database:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data inserted successfully');
+        res.status(201).json({ message: 'Application submitted successfully' });
+    });
+});
+
+// POST TO CANDIDATES (HOTLIST)
+app.post('/candidates-form', upload.fields([
+    { name: 'resume', maxCount: 1 },
+    { name: 'r2r', maxCount: 1 },
+    { name: 'driving', maxCount: 1 },
+    { name: 'visa', maxCount: 1 }
+]), (req, res) => {
+    const { category, submittiondate, candidatename, emailid, phonenumber, positiontitle, visastatus, notes } = req.body;
+    const resumePath = req.files['resume'] ? "uploads/" + req.files['resume'][0].filename : "";
+    const r2rPath = req.files['r2r'] ? "uploads/" + req.files['r2r'][0].filename : "";
+    const drivingPath = req.files['driving'] ? "uploads/" + req.files['driving'][0].filename : "";
+    const visaPath = req.files['visa'] ? "uploads/" + req.files['visa'][0].filename : "";
+    const values = [category, submittiondate, candidatename, emailid, phonenumber, positiontitle, visastatus, notes, resumePath, r2rPath, drivingPath, visaPath]
+
+    const sql = 'INSERT INTO candidates (`category`, `submittiondate`, `candidatename`, `emailid`, `phonenumber`, `positiontitle`, `visastatus`, `notes`, `resumepath`, `r2rpath`, `drivinglicensepath`, `visapath`) VALUES (?)';
     db.query(sql, [values], (err, result) => {
         if (err) {
             console.error('Error inserting data into database:', err);
@@ -218,12 +410,12 @@ app.put('/update-form/:userId', upload.fields([
     { name: 'msacopyfilepath', maxCount: 1 }
 ]), (req, res) => {
     const { userId } = req.params; // Extract the ID from the URL
-    const { 
+    const {
         category, recruitername, recruiterid, submittiondate, candidatename,
-        clientname, pocname, feedback, remarks, cname, cemail, 
+        clientname, pocname, feedback, remarks, cname, cemail,
         cphone, cssn, cpassport, cdriving, cphoto
     } = req.body;
-    
+
     const resumePath = req.files['resumefilepath'] ? "uploads/" + req.files['resumefilepath'][0].filename : req.body.resumefilepath;
     const r2rPath = req.files['r2rfilepath'] ? "uploads/" + req.files['r2rfilepath'][0].filename : req.body.r2rfilepath;
     const drivingPath = req.files['drivinglisencefilepath'] ? "uploads/" + req.files['drivinglisencefilepath'][0].filename : req.body.drivinglisencefilepath;
@@ -233,12 +425,12 @@ app.put('/update-form/:userId', upload.fields([
     console.log(resumePath);
 
     const values = [
-        recruitername, category, recruiterid, candidatename, 
-        submittiondate, clientname, pocname, feedback, remarks, resumePath, 
+        recruitername, category, recruiterid, candidatename,
+        submittiondate, clientname, pocname, feedback, remarks, resumePath,
         r2rPath, drivingPath, visaPath, msaPath, cname, cemail,
         cphone, cssn, cpassport, cdriving, cphoto, userId // Add the ID as the last value
     ];
-    
+
     const sql = `
         UPDATE applications 
         SET 
@@ -284,13 +476,13 @@ app.put('/update-hotlist-application/:userId', upload.fields([
     { name: 'visapath', maxCount: 1 },
 ]), (req, res) => {
     const { userId } = req.params; // Extract the ID from the URL
-    const {category, candidatename, email, phonenumber, technology, location,  visastatus, remarks, resume} = req.body;
-    
+    const { category, candidatename, email, phonenumber, technology, location, visastatus, remarks, resume } = req.body;
+
     const resumePath = req.files['resumepath'] ? "uploads/" + req.files['resumepath'][0].filename : req.body.resumepath;
     const r2rPath = req.files['r2rpath'] ? "uploads/" + req.files['r2rpath'][0].filename : req.body.r2rpath;
     const drivingPath = req.files['drivingpath'] ? "uploads/" + req.files['drivingpath'][0].filename : req.body.drivingpath;
     const visaPath = req.files['visapath'] ? "uploads/" + req.files['visapath'][0].filename : req.body.visapath;
-    const values = [category, candidatename, email, phonenumber, technology, location,  visastatus, remarks, resumePath, r2rPath, drivingPath, visaPath, userId ];
+    const values = [category, candidatename, email, phonenumber, technology, location, visastatus, remarks, resumePath, r2rPath, drivingPath, visaPath, userId];
     const sql = `
         UPDATE hotlistapplication
         SET 
@@ -319,12 +511,153 @@ app.put('/update-hotlist-application/:userId', upload.fields([
     });
 });
 
+//UPDATE PRIME (PRIME)
+app.put('/update-prime-application/:userId', upload.fields([
+    { name: 'msa', maxCount: 1 },
+    { name: 'po', maxCount: 1 },
+    { name: 'coi', maxCount: 1 },
+]), (req, res) => {
+    const { userId } = req.params; // Extract the ID from the URL
+    const { category, vendercompany, recruitername, phonenumber, email, faxnumber, companyaddress, branchlocation, notes } = req.body;
+
+    const msaPath = req.files['msa'] ? "uploads/" + req.files['msa'][0].filename : req.body.resumepath;
+    const poPath = req.files['po'] ? "uploads/" + req.files['po'][0].filename : req.body.r2rpath;
+    const coiPath = req.files['coi'] ? "uploads/" + req.files['coi'][0].filename : req.body.drivingpath;
+    const values = [category, vendercompany, recruitername, phonenumber, email, faxnumber, companyaddress, branchlocation, notes , msaPath, poPath, coiPath, userId];
+    const sql = `
+        UPDATE primevenders
+        SET 
+            category = ?,
+            vendorcompany = ?, 
+            recruitername = ?, 
+            phonenumber = ?, 
+            email = ?, 
+            faxnumber = ?, 
+            companyaddress = ?, 
+            branchlocation = ?, 
+            notes = ?,
+            msapath = ?, 
+            popath = ?, 
+            coipath = ?
+        WHERE id = ?`; // Update query with placeholders for values
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Error updating data:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data updated successfully');
+        res.status(200).json({ message: 'Data updated successfully' });
+    });
+});
+
+//UPDATE JOBS (JOBS)
+app.put('/update-jobs-application/:userId', (req, res) => {
+    const { userId } = req.params; // Extract the ID from the URL
+    const { category, recruitmentdate, positiontitle, clientname, recruitername, location, jobdescription, notes } = req.body;
+    const values = [category, recruitmentdate, positiontitle, clientname, recruitername, location, jobdescription, notes, userId];
+    const sql = `
+        UPDATE hotlistapplication
+        SET 
+            category = ?,
+            recruitmentdate = ?, 
+            positiontitle = ?, 
+            clientname = ?, 
+            recruitername = ?, 
+            location = ?, 
+            jobdescription = ?, 
+            notes = ?
+        WHERE id = ?`; // Update query with placeholders for values
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Error updating data:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data updated successfully');
+        res.status(200).json({ message: 'Data updated successfully' });
+    });
+});
+
+//UPDATE CLIENTS (CLIENTS)
+app.put('/update-clients-application/:userId', (req, res) => {
+    const { userId } = req.params; // Extract the ID from the URL
+    const { category, clientname, clientwebsite, recruitername, recruiteremailid, recruitercontactnumber, jobportellink, notes } = req.body;
+    const values = [category, clientname, clientwebsite, recruitername, recruiteremailid, recruitercontactnumber, jobportellink, notes, userId];
+    const sql = `
+        UPDATE clients
+        SET 
+            category = ?,
+            clientname = ?, 
+            clientwebsite = ?, 
+            recruitername = ?, 
+            recruiteremailid = ?, 
+            recruitercontactnumber = ?, 
+            jobportAllink = ?,
+            notes = ?
+        WHERE id = ?`; // Update query with placeholders for values
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Error updating data:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data updated successfully');
+        res.status(200).json({ message: 'Data updated successfully' });
+    });
+});
+
+//UPDATE CANDIDATES (CANDIDATES)
+app.put('/update-candidates-application/:userId', upload.fields([
+    { name: 'resumepath', maxCount: 1 },
+    { name: 'r2rpath', maxCount: 1 },
+    { name: 'drivinglisencepath', maxCount: 1 },
+    { name: 'visapath', maxCount: 1 },
+]), (req, res) => {
+    const { userId } = req.params; // Extract the ID from the URL
+    const { category, submissiondate, candidatename, emailid, phonenumber, positiontitle, visastatus, notes } = req.body;
+    const resumePath = req.files['resumepath'] ? "uploads/" + req.files['resumepath'][0].filename : req.body.resumepath;
+    const r2rPath = req.files['r2rpath'] ? "uploads/" + req.files['r2rpath'][0].filename : req.body.r2rpath;
+    const drivingPath = req.files['drivinglisencepath'] ? "uploads/" + req.files['drivingpath'][0].filename : req.body.drivingpath;
+    const visaPath = req.files['visapath'] ? "uploads/" + req.files['visapath'][0].filename : req.body.visapath;
+    const values = [ category, submissiondate, candidatename, emailid, phonenumber, positiontitle, visastatus, notes, resumePath, r2rPath, drivingPath, visaPath, userId];
+    const sql = `
+        UPDATE candidates
+        SET 
+            category = ?,
+            submissiondate = ?,
+            candidatename = ?, 
+            emailid = ?, 
+            phonenumber = ?, 
+            positiontitle = ?, 
+            visastatus = ?, 
+            notes = ?, 
+            resumepath = ?, 
+            r2rpath = ?, 
+            drivinglicensepath = ?, 
+            visapath = ?
+        WHERE id = ?`; // Update query with placeholders for values
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Error updating data:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data updated successfully');
+        res.status(200).json({ message: 'Data updated successfully' });
+    });
+});
+
 
 //UPDATE USERDATA (STAFF USER)
 app.put('/update-user-form/:userId', (req, res) => {
     const { userId } = req.params; // Extract the ID from the URL
     const { username, email, password, usertype } = req.body;
-    const values = [ username, email, password, usertype, userId];
+    const values = [username, email, password, usertype, userId];
     console.log(username, email, password, usertype);
     const sql = `
         UPDATE userdata 
@@ -367,7 +700,7 @@ app.delete('/delete-user/:userId', (req, res) => {
     const userId = req.params.userId
     const sql = "DELETE FROM applications WHERE id = ?"
     db.query(sql, [userId], (err, data) => {
-        if(err) return (err)
+        if (err) return (err)
         return res.json("User Deleted Successfully")
     })
 })
@@ -377,7 +710,37 @@ app.delete('/delete-hotlist/:userId', (req, res) => {
     const userId = req.params.userId
     const sql = "DELETE FROM hotlistapplication WHERE id = ?"
     db.query(sql, [userId], (err, data) => {
-        if(err) return (err)
+        if (err) return (err)
+        return res.json("User Deleted Successfully")
+    })
+})
+
+// DELETE FROM  JOBS (JOBS USER)
+app.delete('/delete-jobs/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "DELETE FROM jobs WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) return (err)
+        return res.json("User Deleted Successfully")
+    })
+})
+
+// DELETE FROM PRIME (PRIME USER)
+app.delete('/delete-prime/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "DELETE FROM primevenders WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) return (err)
+        return res.json("User Deleted Successfully")
+    })
+})
+
+// DELETE FROM  CLIENTS (CLIENTS USER)
+app.delete('/delete-clients/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "DELETE FROM clients WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) return (err)
         return res.json("User Deleted Successfully")
     })
 })
@@ -387,7 +750,7 @@ app.delete('/delete-company-user/:userId', (req, res) => {
     const userId = req.params.userId
     const sql = "DELETE FROM userdata WHERE id = ?"
     db.query(sql, [userId], (err, data) => {
-        if(err) return (err)
+        if (err) return (err)
         return res.json("User Deleted Successfully")
     })
 })

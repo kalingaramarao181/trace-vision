@@ -9,7 +9,7 @@ const baseUrl = config.baseUrl
 
 
 
-const HotList = (props) => {
+const Jobs = (props) => {
     const {searchValueData} = props
     const [applicationData, setApplicationData] = useState([])
     const [isOpenEditView, setIsOpenEditView] = useState(false);
@@ -19,9 +19,10 @@ const HotList = (props) => {
 
     //GET APPLICATION DATA
     useEffect(() => {
-        axios.get(`${baseUrl}hotlist-application-data`)
+        axios.get(`${baseUrl}jobs-application-data`)
             .then(res => {
                 setApplicationData(res.data)
+                console.log(res.data);
             })
             .catch(err => {
                 console.log(`Error ${err}`);
@@ -32,15 +33,13 @@ const HotList = (props) => {
         setEditForm({ ...editForm, [e.target.name]: e.target.value })
     }
 
-    const handleEditFileData = (e) => {
-        setEditForm({ ...editForm, [e.target.name]: e.target.files[0]})
-    }
 
     //USER DATA VIEW
     const onClickDataView = async (userId) => {
-        await axios.get(`${baseUrl}hotlist-application/` + userId)
+        await axios.get(`${baseUrl}jobs-application/` + userId)
             .then(res => {
                 setViewData(res.data);
+                console.log(res.data);
             })
             .catch(err => {
                 console.log(err);
@@ -53,19 +52,11 @@ const HotList = (props) => {
     //EDIT APPLICATION
     const handleUpdateForm = async (e) => {
         e.preventDefault()
-        const formData = new FormData();
-        Object.entries(editForm).forEach(([key, value]) => {
-            formData.append(key, value)
-        });
-
+        const formData = editForm
         const userId = viewData.id
 
         try {
-            await axios.put(`${baseUrl}update-hotlist-application/` + userId, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            await axios.put(`${baseUrl}update-jobs-application/` + userId, formData);
             alert('Application Updated successfully');
             window.location.reload()
         } catch (error) {
@@ -117,24 +108,24 @@ const HotList = (props) => {
                                             </select>
                                         </td>
                                     </tr>
-                                    <tr className="applicaton-data-name"><td>Candidate Name: </td><td><span className="application-data-span">{viewData.candidatename}</span></td>
+                                    <tr className="applicaton-data-name"><td>Recruitment Date: </td><td><span className="application-data-span">{viewData.recruitmentdate}</span></td>
                                         <td>
-                                            <input name="candidatename" onChange={handleEditFormData} type="text" className="tw-input" />
+                                            <input name="recruitmentdate" onChange={handleEditFormData} type="text" className="tw-input" />
                                         </td>
                                     </tr>
-                                    <tr className="applicaton-data-name"><td>Email: </td><td><span className="application-data-span">{viewData.email}</span></td>
+                                    <tr className="applicaton-data-name"><td>Position: </td><td><span className="application-data-span">{viewData.positiontitle}</span></td>
                                         <td>
-                                            <input name="email" onChange={handleEditFormData} type="text" className="tw-input" />
+                                            <input name="positiontitle" onChange={handleEditFormData} type="text" className="tw-input" />
                                         </td>
                                     </tr>
-                                    <tr className="applicaton-data-name"><td>Phone Number: </td><td><span className="application-data-span">{viewData.phonenumber}</span></td>
+                                    <tr className="applicaton-data-name"><td>Client Name: </td><td><span className="application-data-span">{viewData.clientname}</span></td>
                                         <td>
-                                            <input name="phonenumber" onChange={handleEditFormData} type="text" className="tw-input" />
+                                            <input name="clientname" onChange={handleEditFormData} type="text" className="tw-input" />
                                         </td>
                                     </tr>
-                                    <tr className="applicaton-data-name"><td>Technology: </td><td><span className="application-data-span">{viewData.technology}</span></td>
+                                    <tr className="applicaton-data-name"><td>Recruiter Name: </td><td><span className="application-data-span">{viewData.recruitername}</span></td>
                                         <td>
-                                            <input name="technology" onChange={handleEditFormData} type="text" className="tw-input" />
+                                            <input name="recruitername" onChange={handleEditFormData} type="text" className="tw-input" />
                                         </td>
                                     </tr>
                                     <tr className="applicaton-data-name"><td>Location: </td><td><span className="application-data-span">{viewData.location}</span></td>
@@ -142,34 +133,14 @@ const HotList = (props) => {
                                             <input name="location" onChange={handleEditFormData} type="text" className="tw-input" />
                                         </td>
                                     </tr>
-                                    <tr className="applicaton-data-name"><td>Visa Status: </td><td><span className="application-data-span">{viewData.visastatus}</span></td>
+                                    <tr className="applicaton-data-name"><td>Job Descreption: </td><td><span className="application-data-span">{viewData.jobdescription}</span></td>
                                         <td>
-                                            <input name="visastatus" onChange={handleEditFormData} type="text" className="tw-input" />
+                                            <input name="jobdescription" onChange={handleEditFormData} type="text" className="tw-input" />
                                         </td>
                                     </tr>
-                                    <tr className="applicaton-data-name"><td>Remarks: </td><td><span className="application-data-span">{viewData.remarks}</span></td>
+                                    <tr className="applicaton-data-name"><td>Notes: </td><td><span className="application-data-span">{viewData.notes}</span></td>
                                         <td>
-                                            <textarea name="remarks" onChange={handleEditFormData} type="text" cols={20} rows={2} className="tw-textarea" />
-                                        </td>
-                                    </tr>
-                                    <tr className="applicaton-data-name"><td>Resume: </td><td><button type="button" onClick={() => openFile(`${baseUrl}${viewData.resumepath}`)}>Open Resume</button></td>
-                                        <td>
-                                            <input name="resumepath" type="file" onChange={handleEditFileData} className="tw-file-input" />
-                                        </td>
-                                    </tr>
-                                    <tr className="applicaton-data-name"><td>R2R: </td><td><button type="button" onClick={() => openFile(`${baseUrl}${viewData.r2rpath}`)}>R2R Copy</button></td>
-                                        <td>
-                                            <input name="r2rpath" type="file" onChange={handleEditFileData} className="tw-file-input" />
-                                        </td>
-                                    </tr>
-                                    <tr className="applicaton-data-name"><td>Driving License: </td><td><button type="button" onClick={() => openFile(`${baseUrl}${viewData.drivingpath}`)}>Open Driving License</button></td>
-                                        <td>
-                                            <input name="drivingpath" type="file" onChange={handleEditFileData} className="tw-file-input" />
-                                        </td>
-                                    </tr>
-                                    <tr className="applicaton-data-name"><td>Visa: </td><td><button type="button" onClick={() => openFile(`${baseUrl}${viewData.visapath}`)}>Open Visa</button></td>
-                                        <td>
-                                            <input name="visacopypath" type="file" onChange={handleEditFileData} className="tw-file-input" />
+                                            <textarea name="notes" onChange={handleEditFormData} type="text" cols={20} rows={2} className="tw-textarea" />
                                         </td>
                                     </tr>
                                 </tbody>
@@ -189,7 +160,7 @@ const HotList = (props) => {
     //USER DATA EDIT
     const onClickEditUser = async (userId, application) => {
         setEditForm(application)
-        await axios.get(`${baseUrl}hotlist-application/` + userId)
+        await axios.get(`${baseUrl}jobs-application/` + userId)
             .then(res => {
                 setViewData(res.data);
             })
@@ -206,7 +177,7 @@ const HotList = (props) => {
             .then(res => console.log(res.data))
             .catch(err => console.log(err))
 
-        await axios.delete(`${baseUrl}delete-hotlist/` + userId)
+        await axios.delete(`${baseUrl}delete-jobs/` + userId)
             .then(res => {
                 console.log("User Deleted Successfully")
                 window.location.reload()
@@ -233,7 +204,7 @@ const HotList = (props) => {
                     boxShadow: '0 6px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
                     transition: 'opacity 0.5s ease-in-out', // Transition effect for opacity
                     backgroundColor: "white",
-                    height: "80vh",
+                    height: "60vh",
                     overflowY: "auto",
                     scrollbarWidth: "none", /* Firefox */
                 }}
@@ -245,18 +216,14 @@ const HotList = (props) => {
                             <hr />
                             <table>
                                 <tbody>
-                                    <tr className="applicaton-data-name"><td>Applied For: </td><td><span className="application-data-span">{viewData.category}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Candidate Name: </td><td><span className="application-data-span">{viewData.candidatename}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Email Address: </td><td><span className="application-data-span">{viewData.email}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Phone Number: </td><td><span className="application-data-span">{viewData.phonenumber}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Technology: </td><td><span className="application-data-span">{viewData.technology}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Current Location: </td><td><span className="application-data-span">{viewData.location}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Visa Status: </td><td><span className="application-data-span">{viewData.visastatus}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Remarks: </td><td><span className="application-data-span">{viewData.remarks}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Resume: </td><td><button type="button" onClick={() => openFile(`${baseUrl}${viewData.resumepath}`)}>Open Resume</button></td></tr>
-                                    <tr className="applicaton-data-name"><td>R2R: </td><td><button type="button" onClick={() => openFile(`${baseUrl}${viewData.r2rpath}`)}>R2R Copy</button></td></tr>
-                                    <tr className="applicaton-data-name"><td>Driving License: </td><td><button type="button" onClick={() => openFile(`${baseUrl}${viewData.drivingpath}`)}>Open Driving License</button></td></tr>
-                                    <tr className="applicaton-data-name"><td>Visa: </td><td><button type="button" onClick={() => openFile(`${baseUrl}${viewData.visapath}`)}>Open Visa</button></td></tr>
+                                    <tr className="applicaton-data-name"><td>Category: </td><td><span className="application-data-span">{viewData.category}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Recruitment Date: </td><td><span className="application-data-span">{viewData.recruitmentdate}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Position Title: </td><td><span className="application-data-span">{viewData.positiontitle}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Client Name: </td><td><span className="application-data-span">{viewData.clientname}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Recruiter Name: </td><td><span className="application-data-span">{viewData.recruitername}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Location: </td><td><span className="application-data-span">{viewData.location}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Job Descreption: </td><td><span className="application-data-span">{viewData.jobdescription}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Notes: </td><td><span className="application-data-span">{viewData.notes}</span></td></tr>
                                 </tbody>
                             </table>
                             <hr />
@@ -290,7 +257,7 @@ const HotList = (props) => {
         });
     }
 
-    const searchedData = applicationData.filter(each => each.technology.toLowerCase().includes(searchValueData) || each.candidatename.toLowerCase().includes(searchValueData))
+    const searchedData = applicationData.filter(each => each.clientname.toLowerCase().includes(searchValueData) || each.clientname.toLowerCase().includes(searchValueData))
 
 
     return (
@@ -299,9 +266,9 @@ const HotList = (props) => {
                     <thead>
                         <tr>
                             <th className="data-view-table-data">S No</th>
-                            <th className="data-view-table-data">Candidate Details</th>
-                            <th className="data-view-table-data">Technology</th>
-                            <th className="data-view-table-data">Location & VisaStatus</th>
+                            <th className="data-view-table-data">Recruitment Details</th>
+                            <th className="data-view-table-data">Recruiter Name</th>
+                            <th className="data-view-table-data">Client Name</th>
                             <th className="data-view-table-data">Action</th>
                         </tr>
                     </thead>
@@ -310,16 +277,11 @@ const HotList = (props) => {
                             return <tr key={index}>
                                 <td className="data-view-table-data">{index + 1}</td>
                                 <td className="data-view-table-data data-view-table-data-submittion">
-                                    <p className="applicaton-data-name">Name: <span className="application-data-span">{eachApplication.candidatename}</span></p>
+                                    <p className="applicaton-data-name">Recruitment Date: <span className="application-data-span">{eachApplication.recruitmentdate}</span></p>
                                     <p className="applicaton-data-name">Applied For: <span className="application-data-span">{eachApplication.category}</span></p>
-                                    <p className="applicaton-data-name">Email: <span className="application-data-span">{eachApplication.email}</span></p>
-                                    <p className="applicaton-data-name">Phone No: <span className="application-data-span">{eachApplication.phonenumber}</span></p>
                                 </td>
-                                <td className="data-view-table-data">{eachApplication.technology}</td>
-                                <td className="data-view-table-data data-view-table-data-submittion">
-                                    <p className="applicaton-data-name">Current Location: <span className="application-data-span">{eachApplication.location}</span></p>
-                                    <p className="applicaton-data-name">Visa Status: <span className="application-data-span">{eachApplication.visastatus}</span></p>
-                                </td>
+                                <td className="data-view-table-data">{eachApplication.recruitername}</td>
+                                <td className="data-view-table-data">{eachApplication.clientname}</td>
                                 <td className="data-view-table-data">
                                     <button type="button" onClick={() => onClickDataView(eachApplication.id)} className="action-view-button">View</button>
                                     <button type="button" onClick={() => onClickEditUser(eachApplication.id, eachApplication)} className="action-edit-button">Edit</button>
@@ -337,4 +299,4 @@ const HotList = (props) => {
     )
 }
 
-export default HotList
+export default Jobs
