@@ -1,0 +1,46 @@
+.trashbin-container{
+    display: flex;
+    flex-direction: row;
+    width: 70vw;
+    flex-wrap: wrap;
+}
+.trashbin-card{
+    padding: 1vh;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    border-radius: 5px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+.trashbin-name{
+    font-size: 10px;
+    margin: 0px;
+}
+.trashbin-delete-button, .trashbin-replace-button{
+    font-size: 5px;
+    border: none;
+    background-color: red;
+    color: white;
+    border-radius: 2px;
+    margin-right: 5px;
+    padding: 5px;
+}
+.trashbin-replace-button{
+    background-color: green;
+}
+.trashbin-main-container{
+    display: flex;
+    flex-direction: column;
+    padding: 2vw;
+}
+.trashbin-allclear-button{
+    align-self: flex-end;
+    font-size: 1vw;
+    border: none;
+    border-radius: 5px;
+    padding: 1vw;
+}

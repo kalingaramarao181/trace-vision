@@ -9,8 +9,8 @@ const baseUrl = config.baseUrl
 
 
 
-const Jobs = (props) => {
-    const {searchValueData} = props
+const Training = (props) => {
+    const { searchValueData } = props
     const [applicationData, setApplicationData] = useState([])
     const [isOpenEditView, setIsOpenEditView] = useState(false);
     const [isOpenDataView, setIsOpenDataView] = useState(false);
@@ -19,10 +19,9 @@ const Jobs = (props) => {
 
     //GET APPLICATION DATA
     useEffect(() => {
-        axios.get(`${baseUrl}jobs-application-data`)
+        axios.get(`${baseUrl}training-application-data`)
             .then(res => {
                 setApplicationData(res.data)
-                console.log(res.data);
             })
             .catch(err => {
                 console.log(`Error ${err}`);
@@ -31,21 +30,19 @@ const Jobs = (props) => {
 
     const handleEditFormData = (e) => {
         setEditForm({ ...editForm, [e.target.name]: e.target.value })
+        console.log(editForm);
     }
-
 
     //USER DATA VIEW
     const onClickDataView = async (userId) => {
-        await axios.get(`${baseUrl}jobs-application/` + userId)
+        await axios.get(`${baseUrl}training-application/` + userId)
             .then(res => {
                 setViewData(res.data);
-                console.log(res.data);
             })
             .catch(err => {
                 console.log(err);
             })
         setIsOpenDataView(true)
-        console.log(viewData);
     }
 
 
@@ -54,15 +51,42 @@ const Jobs = (props) => {
         e.preventDefault()
         const formData = editForm
         const userId = viewData.id
-
         try {
-            await axios.put(`${baseUrl}update-jobs-application/` + userId, formData);
+            await axios.put(`${baseUrl}update-training-application/` + userId, formData );
             alert('Application Updated successfully');
             window.location.reload()
         } catch (error) {
             console.error('Error updating application:', error);
         }
 
+    }
+
+    //USER DATA EDIT
+    const onClickEditUser = async (userId, application) => {
+        setEditForm(application)
+        await axios.get(`${baseUrl}training-application/` + userId)
+            .then(res => {
+                setViewData(res.data);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        setIsOpenEditView(true)
+    }
+
+    //USER DATA DELETE
+    const onClickDeleteUser = async (userId, application) => {
+        console.log(application);
+        await axios.post(`${baseUrl}trashbin`, application)
+            .then(res => console.log(res.data))
+            .catch(err => console.log(err))
+
+        await axios.delete(`${baseUrl}delete-training/` + userId)
+            .then(res => {
+                console.log("User Deleted Successfully")
+                window.location.reload()
+            })
+            .catch(err => console.log(err))
     }
 
     //DATA EDIT POPUP
@@ -108,34 +132,34 @@ const Jobs = (props) => {
                                             </select>
                                         </td>
                                     </tr>
-                                    <tr className="applicaton-data-name"><td>Recruitment Date: </td><td><span className="application-data-span">{viewData.recruitmentdate}</span></td>
+                                    <tr className="applicaton-data-name"><td>Enrollment Date: </td><td><span className="application-data-span">{viewData.enrollmentdate}</span></td>
                                         <td>
-                                            <input name="recruitmentdate" onChange={handleEditFormData} type="text" className="tw-input" />
+                                            <input name="enrollmentdate" onChange={handleEditFormData} type="date" className="tw-input" />
                                         </td>
                                     </tr>
-                                    <tr className="applicaton-data-name"><td>Position: </td><td><span className="application-data-span">{viewData.positiontitle}</span></td>
+                                    <tr className="applicaton-data-name"><td>Candidate Name: </td><td><span className="application-data-span">{viewData.candidatename}</span></td>
                                         <td>
-                                            <input name="positiontitle" onChange={handleEditFormData} type="text" className="tw-input" />
+                                            <input name="candidatename" onChange={handleEditFormData} type="text" className="tw-input" />
                                         </td>
                                     </tr>
-                                    <tr className="applicaton-data-name"><td>Client Name: </td><td><span className="application-data-span">{viewData.clientname}</span></td>
+                                    <tr className="applicaton-data-name"><td>Email ID: </td><td><span className="application-data-span">{viewData.emailid}</span></td>
                                         <td>
-                                            <input name="clientname" onChange={handleEditFormData} type="text" className="tw-input" />
+                                            <input name="emailid" onChange={handleEditFormData} type="text" className="tw-input" />
                                         </td>
                                     </tr>
-                                    <tr className="applicaton-data-name"><td>Recruiter Name: </td><td><span className="application-data-span">{viewData.recruitername}</span></td>
+                                    <tr className="applicaton-data-name"><td>Phone Number: </td><td><span className="application-data-span">{viewData.phonenumber}</span></td>
                                         <td>
-                                            <input name="recruitername" onChange={handleEditFormData} type="text" className="tw-input" />
+                                            <input name="phonenumber" onChange={handleEditFormData} type="text" className="tw-input" />
                                         </td>
                                     </tr>
-                                    <tr className="applicaton-data-name"><td>Location: </td><td><span className="application-data-span">{viewData.location}</span></td>
+                                    <tr className="applicaton-data-name"><td>Course Name: </td><td><span className="application-data-span">{viewData.coursename}</span></td>
                                         <td>
-                                            <input name="location" onChange={handleEditFormData} type="text" className="tw-input" />
+                                            <input name="coursename" onChange={handleEditFormData} type="text" className="tw-input" />
                                         </td>
                                     </tr>
-                                    <tr className="applicaton-data-name"><td>Job Descreption: </td><td><span className="application-data-span">{viewData.jobdescription}</span></td>
+                                    <tr className="applicaton-data-name"><td>Faculty Name: </td><td><span className="application-data-span">{viewData.facultyname}</span></td>
                                         <td>
-                                            <input name="jobdescription" onChange={handleEditFormData} type="text" className="tw-input" />
+                                            <input name="facultyname" onChange={handleEditFormData} type="text" className="tw-input" />
                                         </td>
                                     </tr>
                                     <tr className="applicaton-data-name"><td>Notes: </td><td><span className="application-data-span">{viewData.notes}</span></td>
@@ -143,6 +167,7 @@ const Jobs = (props) => {
                                             <textarea name="notes" onChange={handleEditFormData} type="text" cols={20} rows={2} className="tw-textarea" />
                                         </td>
                                     </tr>
+
                                 </tbody>
                             </table>
                             <hr />
@@ -155,34 +180,6 @@ const Jobs = (props) => {
                 )}
             </Popup>
         )
-    }
-
-    //USER DATA EDIT
-    const onClickEditUser = async (userId, application) => {
-        setEditForm(application)
-        await axios.get(`${baseUrl}jobs-application/` + userId)
-            .then(res => {
-                setViewData(res.data);
-            })
-            .catch(err => {
-                console.log(err);
-            })
-        setIsOpenEditView(true)
-    }
-
-    //USER DATA DELETE
-    const onClickDeleteUser = async (userId, application) => {
-        console.log(application);
-        await axios.post(`${baseUrl}trashbin`, application)
-            .then(res => console.log(res.data))
-            .catch(err => console.log(err))
-
-        await axios.delete(`${baseUrl}delete-jobs/` + userId)
-            .then(res => {
-                console.log("User Deleted Successfully")
-                window.location.reload()
-            })
-            .catch(err => console.log(err))
     }
 
     //DATA VIEW POPUP
@@ -199,7 +196,7 @@ const Jobs = (props) => {
                     boxShadow: '0 6px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
                     transition: 'opacity 0.5s ease-in-out', // Transition effect for opacity
                     backgroundColor: "white",
-                    height: "60vh",
+                    height: "80vh",
                     overflowY: "auto",
                     scrollbarWidth: "none", /* Firefox */
                 }}
@@ -211,14 +208,15 @@ const Jobs = (props) => {
                             <hr />
                             <table>
                                 <tbody>
-                                    <tr className="applicaton-data-name"><td>Category: </td><td><span className="application-data-span">{viewData.category}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Recruitment Date: </td><td><span className="application-data-span">{viewData.recruitmentdate}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Position Title: </td><td><span className="application-data-span">{viewData.positiontitle}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Client Name: </td><td><span className="application-data-span">{viewData.clientname}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Recruiter Name: </td><td><span className="application-data-span">{viewData.recruitername}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Location: </td><td><span className="application-data-span">{viewData.location}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Job Descreption: </td><td><span className="application-data-span">{viewData.jobdescription}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Applied For: </td><td><span className="application-data-span">{viewData.category}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Enrollment Date: </td><td><span className="application-data-span">{viewData.enrollmentdate}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Candidate Name : </td><td><span className="application-data-span">{viewData.candidatename}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Email ID: </td><td><span className="application-data-span">{viewData.emailid}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Phone Number: </td><td><span className="application-data-span">{viewData.phonenumber}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Course Name: </td><td><span className="application-data-span">{viewData.coursename}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Faculty Name: </td><td><span className="application-data-span">{viewData.facultyname}</span></td></tr>
                                     <tr className="applicaton-data-name"><td>Notes: </td><td><span className="application-data-span">{viewData.notes}</span></td></tr>
+
                                 </tbody>
                             </table>
                             <hr />
@@ -231,7 +229,6 @@ const Jobs = (props) => {
             </Popup>
         )
     }
-
 
     //DELETE CONFORM ALERT
     const deleteAlert = (appId, application) => {
@@ -252,46 +249,44 @@ const Jobs = (props) => {
         });
     }
 
-    const searchedData = applicationData.filter(each => each.clientname.toLowerCase().includes(searchValueData) || each.clientname.toLowerCase().includes(searchValueData))
-
+    const searchedData = applicationData.filter(each => each.candidatename.toLowerCase().includes(searchValueData) || each.coursename.toLowerCase().includes(searchValueData))
 
     return (
         <div className="tw-data-view-container">
-                <table className="data-view-table-container">
-                    <thead>
-                        <tr>
-                            <th className="data-view-table-data">S No</th>
-                            <th className="data-view-table-data">Recruitment Details</th>
-                            <th className="data-view-table-data">Recruiter Name</th>
-                            <th className="data-view-table-data">Client Name</th>
-                            <th className="data-view-table-data">Action</th>
+            <table className="data-view-table-container">
+                <thead>
+                    <tr>
+                        <th className="data-view-table-data">S No</th>
+                        <th className="data-view-table-data">Candidate Name</th>
+                        <th className="data-view-table-data">Email ID</th>
+                        <th className="data-view-table-data">phonenumber</th>
+                        <th className="data-view-table-data">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {searchedData.map((eachApplication, index) => {
+                        return <tr key={index}>
+                            <td className="data-view-table-data">{index + 1}</td>
+                            <td className="data-view-table-data data-view-table-data-submittion">
+                                <p className="applicaton-data-name">Name: <span className="application-data-span">{eachApplication.candidatename}</span></p>
+                                <p className="applicaton-data-name">Applied For: <span className="application-data-span">{eachApplication.category}</span></p>
+                            </td>
+                            <td className="data-view-table-data">{eachApplication.emailid}</td>
+                            <td className="data-view-table-data">{eachApplication.phonenumber}</td>
+                            <td className="data-view-table-data">
+                                <button type="button" onClick={() => onClickDataView(eachApplication.id)} className="action-view-button">View</button>
+                                <button type="button" onClick={() => onClickEditUser(eachApplication.id, eachApplication)} className="action-edit-button">Edit</button>
+                                <button type="button" onClick={() => deleteAlert(eachApplication.id, eachApplication)} className="action-delete-button">Delete</button>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {searchedData.map((eachApplication, index) => {
-                            return <tr key={index}>
-                                <td className="data-view-table-data">{index + 1}</td>
-                                <td className="data-view-table-data data-view-table-data-submittion">
-                                    <p className="applicaton-data-name">Recruitment Date: <span className="application-data-span">{eachApplication.recruitmentdate}</span></p>
-                                    <p className="applicaton-data-name">Applied For: <span className="application-data-span">{eachApplication.category}</span></p>
-                                </td>
-                                <td className="data-view-table-data">{eachApplication.recruitername}</td>
-                                <td className="data-view-table-data">{eachApplication.clientname}</td>
-                                <td className="data-view-table-data">
-                                    <button type="button" onClick={() => onClickDataView(eachApplication.id)} className="action-view-button">View</button>
-                                    <button type="button" onClick={() => onClickEditUser(eachApplication.id, eachApplication)} className="action-edit-button">Edit</button>
-                                    <button type="button" onClick={() => deleteAlert(eachApplication.id, eachApplication)} className="action-delete-button">Delete</button>
-                                </td>
-                            </tr>
-                        })}
-                    </tbody>
-                </table>
-                {searchedData.length === 0 && <p className="no-data-reaction">No Data Found</p>}
-                {dataVewPopup()}
-                {dataEditPopup()}
-
-            </div>
+                    })}
+                </tbody>
+            </table>
+            {searchedData.length === 0 && <p>No Data Found</p>}
+            {dataVewPopup()}
+            {dataEditPopup()}
+        </div>
     )
 }
 
-export default Jobs
+export default Training

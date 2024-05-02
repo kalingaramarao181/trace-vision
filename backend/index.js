@@ -72,6 +72,9 @@ app.post("/login", (req, res) => {
 })
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//GET DATA
+
 //GET DATA FROM APPLICATIONS (RECRUITING & BENCH)
 app.get('/application-data', (req, res) => {
     // Fetch data from the database
@@ -150,6 +153,35 @@ app.get('/candidates-application-data', (req, res) => {
     });
 });
 
+//GET DATA FROM TRAINING (TRAINING)
+app.get('/training-application-data', (req, res) => {
+    // Fetch data from the database
+    const sql = 'SELECT * FROM training';
+    db.query(sql, (err, result) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(result);
+    });
+});
+
+//GET DATA FROM INTERVIEW (TRAINING)
+app.get('/interview-application-data', (req, res) => {
+    // Fetch data from the database
+    const sql = 'SELECT * FROM interview';
+    db.query(sql, (err, result) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(result);
+    });
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//GET SINGLE USER DATA
+
 //GET DATA FROM APPLICATIONS USING ID (RECRUITING & BENCH)
 app.get('/application/:userId', (req, res) => {
     const userId = req.params.userId
@@ -210,6 +242,26 @@ app.get('/candidates-application/:userId', (req, res) => {
     })
 })
 
+//GET DATA FROM TRAINING USING ID (CANDIDATES)
+app.get('/training-application/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "SELECT * FROM training WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data[0])
+    })
+})
+
+//GET DATA FROM INTERVIEW USING ID (INTERVIEW)
+app.get('/interview-application/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "SELECT * FROM interview WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data[0])
+    })
+})
+
 //GET DATA FROM USERDATA USING ID (STAFF USER)
 app.get('/company-user/:userId', (req, res) => {
     const userId = req.params.userId
@@ -238,6 +290,9 @@ app.get("/barchat-data", (req, res) => {
         return res.json(data)
     })
 })
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//POST
 
 //POST TO USERDATA (STAFF USER)
 app.post('/company-user', (req, res) => {
@@ -400,6 +455,42 @@ app.post('/candidates-form', upload.fields([
         res.status(201).json({ message: 'Application submitted successfully' });
     });
 });
+
+// POST TO TRAINING (TRAINING)
+app.post('/training-form', (req, res) => {
+    const {category, enrollmentdate, candidatename, emailid, phonenumber, coursename, facultyname, notes} = req.body;
+    const values = [category, enrollmentdate, candidatename, emailid, phonenumber, coursename, facultyname, notes]
+    const sql = 'INSERT INTO training (`category`, `enrollmentdate`, `candidatename`, `emailid`, `phonenumber`, `coursename`, `facultyname`, `notes`) VALUES (?)';
+    db.query(sql, [values], (err, result) => {
+        if (err) {
+            console.error('Error inserting data into database:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data inserted successfully');
+        res.status(201).json({ message: 'Application submitted successfully' });
+    });
+});
+
+// POST TO INTERVIEW (INTERVIEW)
+app.post('/interview-form', (req, res) => {
+    const {category, interviewdate, recruitername, candidatename, technology, vendorrecruitername, vendorphonenumber, vendoremailid, endclient, interviewslot, interviewmode, position, billrate, feedback} = req.body;
+    const values = [category, interviewdate, recruitername, candidatename, technology, vendorrecruitername, vendorphonenumber, vendoremailid, endclient, interviewslot, interviewmode, position, billrate, feedback]
+    const sql = 'INSERT INTO interview (`category`, `interviewdate`, `recruitername`, `candidatename`, `technology`, `vendorrecruitername`, `vendorphonenumber`, `vendoremailid`, `endclient`, `interviewslot`, `interviewmode`, `position`, `billrate`, `feedback`) VALUES (?)';
+    db.query(sql, [values], (err, result) => {
+        if (err) {
+            console.error('Error inserting data into database:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data inserted successfully');
+        res.status(201).json({ message: 'Application submitted successfully' });
+    });
+});
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//UPDATE
 
 //UPDATE APPLICATIONS (RECRUITING & BENCH)
 app.put('/update-form/:userId', upload.fields([
@@ -652,6 +743,70 @@ app.put('/update-candidates-application/:userId', upload.fields([
     });
 });
 
+//UPDATE TRAINING (TRAINING)
+app.put('/update-training-application/:userId', (req, res) => {
+    const { userId } = req.params; // Extract the ID from the URL
+    const { category, enrollmentdate, candidatename, emailid, phonenumber, coursename, facultyname, notes } = req.body;
+    const values = [category, enrollmentdate, candidatename, emailid, phonenumber, coursename, facultyname, notes, userId];
+    const sql = `
+        UPDATE training
+        SET 
+            category = ?,
+            enrollmentdate = ?,
+            candidatename = ?,
+            emailid = ?,
+            phonenumber = ?,
+            coursename = ?,
+            facultyname = ?,
+            notes = ?
+        WHERE id = ?`; // Update query with placeholders for values
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Error updating data:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data updated successfully');
+        res.status(200).json({ message: 'Data updated successfully' });
+    });
+});
+
+//UPDATE INTERVIEW (INTERVIEW)
+app.put('/update-interview-application/:userId', (req, res) => {
+    const { userId } = req.params; // Extract the ID from the URL
+    const { category, interviewdate, recruitername, candidatename, technology, vendorrecruitername, vendorphonenumber, vendoremailid, endclient, interviewslot, interviewmode, position, billrate, feedback } = req.body;
+    const values = [category, interviewdate, recruitername, candidatename, technology, vendorrecruitername, vendorphonenumber, vendoremailid, endclient, interviewslot, interviewmode, position, billrate, feedback, userId];
+    const sql = `
+        UPDATE interview
+            SET 
+                category = ?,
+                interviewdate = ?,
+                recruitername = ?,
+                candidatename = ?,
+                technology = ?,
+                vendorrecruitername = ?,
+                vendorphonenumber = ?,
+                vendoremailid = ?,
+                endclient = ?,
+                interviewslot = ?,
+                interviewmode = ?,
+                position = ?,
+                billrate = ?,
+                feedback = ?
+            WHERE id = ?`; // Update query with placeholders for values
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Error updating data:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data updated successfully');
+        res.status(200).json({ message: 'Data updated successfully' });
+    });
+});
+
 
 //UPDATE USERDATA (STAFF USER)
 app.put('/update-user-form/:userId', (req, res) => {
@@ -679,21 +834,8 @@ app.put('/update-user-form/:userId', (req, res) => {
     });
 });
 
-//POST TO TRASHBIN (DELETED DATA)
-app.post('/trashbin', (req, res) => {
-    const application = req.body;
-    const dbAppData = JSON.stringify(application); // Optionally stringify the data
-    const sql = "INSERT INTO trashbin (`trasheddata`) VALUES (?)";
-    db.query(sql, [dbAppData], (err, data) => {
-        if (err) {
-            console.error("Error inserting data into trashbin:", err);
-            return res.status(500).json(err);
-        }
-        console.log("Successfully inserted into trashbin");
-        return res.json("Successfully Inserted into trashbin");
-    });
-});
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//DELETE
 
 // DELETE FROM APPLICATIONS (RECRUITING & BENCH)
 app.delete('/delete-user/:userId', (req, res) => {
@@ -745,6 +887,36 @@ app.delete('/delete-clients/:userId', (req, res) => {
     })
 })
 
+// DELETE FROM CANDIDATES (CANDIDATES USER)
+app.delete('/delete-candidates/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "DELETE FROM candidates WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) return (err)
+        return res.json("User Deleted Successfully")
+    })
+})
+
+// DELETE FROM TRAINING (TRAINING USER)
+app.delete('/delete-training/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "DELETE FROM training WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) return (err)
+        return res.json("User Deleted Successfully")
+    })
+})
+
+// DELETE FROM INTERVIEW (INTERVIEW USER)
+app.delete('/delete-interview/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "DELETE FROM interview WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) return (err)
+        return res.json("User Deleted Successfully")
+    })
+})
+
 // DELETE FROM USERDATA (STAFF USER)
 app.delete('/delete-company-user/:userId', (req, res) => {
     const userId = req.params.userId
@@ -755,8 +927,82 @@ app.delete('/delete-company-user/:userId', (req, res) => {
     })
 })
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//TRASHBIN
+
+//GET DATA FROM TRASHBIN
+app.get('/trashbin', (req, res) => {
+    const sql = "SELECT * FROM trashbin"
+    db.query(sql, (err, data) => {
+        if(err) return res.status(500).json({error: err})
+        return res.json(data)
+    })
+})
+
+//POST TO TRASHBIN (DELETED DATA)
+app.post('/trashbin', (req, res) => {
+    const application = req.body;
+    const dbAppData = JSON.stringify(application); // Optionally stringify the data
+    const sql = "INSERT INTO trashbin (`trasheddata`) VALUES (?)";
+    db.query(sql, [dbAppData], (err, data) => {
+        if (err) {
+            console.error("Error inserting data into trashbin:", err);
+            return res.status(500).json(err);
+        }
+        console.log("Successfully inserted into trashbin");
+        return res.json("Successfully Inserted into trashbin");
+    });
+});
+
+app.post('/trashbin-to', (req, res) => {
+    const reqObj = req.body
+    delete reqObj.id
+    if (reqObj.category === "Recruiting"){
+        reqObj.category = "applications"
+    }else if(reqObj.category === "Bench"){
+        reqObj.category = "applications"
+    }
+    const sql = `INSERT INTO ${reqObj.category.charAt(0).toLowerCase() + reqObj.category.slice(1)} 
+    (${Object.keys(reqObj).map(each => each )}) VALUES (?)`
+    console.log(sql);
+    const values = Object.values(reqObj)
+    db.query(sql, [values], (err, data) => {
+        if (err) {
+            console.error(`Error inserting data ${reqObj.category}`, err);
+            return res.status(500).json(err);
+        }
+        console.log("Successfully inserted into trashbin");
+        return res.json(`Successfully Inserted into ${reqObj.category}`);
+    });
+})
+
+// DELETE FROM TRASHBIN (SRASHBIN USER)
+app.delete('/delete-trashbin/:appId', (req, res) => {
+    const userId = req.params.appId
+    const sql = "DELETE FROM trashbin WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) {
+            console.error("Error deleting user:", err);
+            return res.status(500).json({ error: "An error occurred while deleting user" });
+        }
+        return res.json("User Deleted Successfully");
+    });
+});
 
 
+app.delete('/delete-trashbin-all', (req, res) => {
+    const sql = "DELETE FROM trashbin";
+    db.query(sql, (err, data) => {
+        if (err) {
+            console.error("Error deleting entries from trashbin:", err);
+            return res.status(500).json({ error: "An error occurred while deleting entries from trashbin" });
+        }
+        return res.json("All entries deleted from trashbin successfully");
+    });
+});
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SERVER RUNNING STATUS
 const PORT = process.env.PORT || 4001;
 app.listen(PORT, () => {

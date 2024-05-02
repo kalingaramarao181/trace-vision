@@ -16,6 +16,7 @@ const HotList = (props) => {
     const [isOpenDataView, setIsOpenDataView] = useState(false);
     const [editForm, setEditForm] = useState({})
     const [viewData, setViewData] = useState({})
+    
 
     //GET APPLICATION DATA
     useEffect(() => {
