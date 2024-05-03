@@ -53,6 +53,10 @@ const Admin = (props) => {
     const [trainingForm, setTrainingForm] = useState({})
     const [interviewForm, setInterviewForm] = useState({})
 
+
+    useEffect(() => {
+        
+    },[])
     
 
 
@@ -409,19 +413,52 @@ const Admin = (props) => {
     }
 
     //DOWNLOAD EXCEL
-    const downloadExcel = () => {
-        // Convert data to Excel format
-        const wb = XLSX.utils.book_new();
+    const downloadExcel = async () => {
+        let excelData = []
+        //DOWNLOAD EXCEL GETTING DATA
+        await axios.get(`${baseUrl}application-search-data`, {
+            params:{
+                search: searchValue,
+                tablename: sidebarStatus
+            }
+        }).then(res => {
+            excelData = res.data
+        }).catch(err => {
+            console.log(err);
+        })
+        // CONVERT DATA TO EXCEL FORMAT
+        const wb = await  XLSX.utils.book_new();
         wb.Props = {
           Title: `${sidebarStatus}-${searchValue}`,
           Author: 'Your Name',
         };
-        const ws = XLSX.utils.json_to_sheet(searchedData);
-        XLSX.utils.book_append_sheet(wb, ws, 'Data');
+        const ws = await XLSX.utils.json_to_sheet(excelData);
+        await XLSX.utils.book_append_sheet(wb, ws, `${sidebarStatus}`);
     
-        // Generate Excel file and trigger download
-        XLSX.writeFile(wb, `${sidebarStatus}-${searchValue}.xlsx`);
+        // GENERATE EXCEL FILE AND TRIGGER DOWNLOAD
+        await XLSX.writeFile(wb, `${sidebarStatus}-${searchValue}.xlsx`);
+        console.log(excelData);
       };
+
+
+      //DOWNLOAD EXCEL CONFORM ALERT
+    const excelDownloadAlert = (appId, application) => {
+        confirmAlert({
+            title: 'Confirm to delete',
+            message: 'Are you sure you want to download this excel form?',
+            backgroundColor: 'transparent',
+            buttons: [
+                {
+                    label: 'Cancel',
+                    onClick: () => console.log('Delete canceled')
+                },
+                {
+                    label: 'Download',
+                    onClick: () => downloadExcel()
+                }
+            ]
+        });
+    }
 
       //GENERATE REPORT BUTTON
     const handleGenarateReport = () => {
@@ -460,7 +497,7 @@ const Admin = (props) => {
                             <form onSubmit={handleSubmit} className="tw-form-container">
                                 <div className="tw-input-container">
                                     <label className="tw-label">Category:</label>
-                                    <select value={sidebarStatus} name="category" onChange={handleFormData} className="tw-select" required>
+                                    <select name="category" onChange={handleFormData} className="tw-select" required>
                                         <option value="">--Select Category--</option>
                                         <option value="Recruiting">Recruiting</option>
                                         <option value="Bench">Bench</option>
@@ -629,7 +666,7 @@ const Admin = (props) => {
                                 <form onSubmit={handleSubmitHot} className="tw-form-container">
                                     <div className="tw-input-container">
                                         <label className="tw-label">Category:</label>
-                                        <select value={sidebarStatus} name="category" onChange={handleHotFormData} className="tw-select" required>
+                                        <select name="category" onChange={handleHotFormData} className="tw-select" required>
                                             <option value="">--Select Category--</option>
                                             <option value="Recruiting">Recruiting</option>
                                             <option value="Bench">Bench</option>
@@ -729,7 +766,7 @@ const Admin = (props) => {
                                 <form onSubmit={handleSubmitJobs} className="tw-form-container">
                                     <div className="tw-input-container">
                                         <label className="tw-label">Category:</label>
-                                        <select value={sidebarStatus} name="category" onChange={handleJobsFormData} className="tw-select" required>
+                                        <select name="category" onChange={handleJobsFormData} className="tw-select" required>
                                             <option value="">--Select Category--</option>
                                             <option value="Recruiting">Recruiting</option>
                                             <option value="Bench">Bench</option>
@@ -813,7 +850,7 @@ const Admin = (props) => {
                                 <form onSubmit={handleSubmitPrime} className="tw-form-container">
                                     <div className="tw-input-container">
                                         <label className="tw-label">Category:</label>
-                                        <select value={sidebarStatus} name="category" onChange={handlePrimeFormData} className="tw-select" required>
+                                        <select name="category" onChange={handlePrimeFormData} className="tw-select" required>
                                             <option value="">--Select Category--</option>
                                             <option value="Recruiting">Recruiting</option>
                                             <option value="Bench">Bench</option>
@@ -913,7 +950,7 @@ const Admin = (props) => {
                                 <form onSubmit={handleSubmitClients} className="tw-form-container">
                                     <div className="tw-input-container">
                                         <label className="tw-label">Category:</label>
-                                        <select value={sidebarStatus} name="category" onChange={handleClientsFormData} className="tw-select" required>
+                                        <select name="category" onChange={handleClientsFormData} className="tw-select" required>
                                             <option value="">--Select Category--</option>
                                             <option value="Recruiting">Recruiting</option>
                                             <option value="Bench">Bench</option>
@@ -998,7 +1035,7 @@ const Admin = (props) => {
                                 <form onSubmit={handleSubmitCandidates} className="tw-form-container">
                                     <div className="tw-input-container">
                                         <label className="tw-label">Category:</label>
-                                        <select value={sidebarStatus} name="category" onChange={handleCandidatesFormData} className="tw-select" required>
+                                        <select name="category" onChange={handleCandidatesFormData} className="tw-select" required>
                                             <option value="">--Select Category--</option>
                                             <option value="Recruiting">Recruiting</option>
                                             <option value="Bench">Bench</option>
@@ -1100,7 +1137,7 @@ const Admin = (props) => {
                                 <form onSubmit={handleSubmitTraining} className="tw-form-container">
                                     <div className="tw-input-container">
                                         <label className="tw-label">Category:</label>
-                                        <select value={sidebarStatus} name="category" onChange={handleTrainingFormData} className="tw-select" required>
+                                        <select name="category" onChange={handleTrainingFormData} className="tw-select" required>
                                             <option value="">--Select Category--</option>
                                             <option value="Recruiting">Recruiting</option>
                                             <option value="Bench">Bench</option>
@@ -1185,7 +1222,7 @@ const Admin = (props) => {
                                 <form onSubmit={handleSubmitInterview} className="tw-form-container">
                                     <div className="tw-input-container">
                                         <label className="tw-label">Category:</label>
-                                        <select value={sidebarStatus} name="category" onChange={handleInterviewFormData} className="tw-select" required>
+                                        <select name="category" onChange={handleInterviewFormData} className="tw-select" required>
                                             <option value="">--Select Category--</option>
                                             <option value="Recruiting">Recruiting</option>
                                             <option value="Bench">Bench</option>
@@ -1565,9 +1602,9 @@ const Admin = (props) => {
                         {addFormButtonView()}
                     </div>
                     <div className="tw-generate-button-bar">
-                        <button type="button" onClick={downloadExcel} className="tw-generate-button">Generate Report</button>
-                        <button onClick={handleGenarateReport} className="tw-generate-employe-button">Generate Employe Report - Barchart</button>
-                        <button onClick={handleGenarateReport} className="tw-pie-chart-button">Benchsale Pie Chart</button>
+                        <button type="button" onClick={excelDownloadAlert} className="tw-generate-button">Generate Report</button>
+                        {sidebarStatus === "Recruiting" || sidebarStatus === "Bench" ?<button onClick={handleGenarateReport} className="tw-generate-employe-button">Generate Employe Report - Barchart</button> : null}
+                        {sidebarStatus === "Recruiting" || sidebarStatus === "Bench" ?<button onClick={handleGenarateReport} className="tw-pie-chart-button">Benchsale Pie Chart</button> : null}
                     </div>
                     <div className="admin-search-input-container">
                         <h1 className="admin-search-head-element">{sidebarStatus} View</h1>

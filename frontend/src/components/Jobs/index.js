@@ -252,7 +252,7 @@ const Jobs = (props) => {
         });
     }
 
-    const searchedData = applicationData.filter(each => each.clientname.toLowerCase().includes(searchValueData) || each.clientname.toLowerCase().includes(searchValueData))
+    const searchedData = applicationData.filter(each => each.clientname.toLowerCase().includes(searchValueData) || each.recruitername.toLowerCase().includes(searchValueData))
 
 
     return (

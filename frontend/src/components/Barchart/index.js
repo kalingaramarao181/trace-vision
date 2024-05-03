@@ -79,7 +79,7 @@ const Barchats = () => {
                 console.log(err);
             })
     }
-    const colors = ['#f56342', '#82ca9d', '#ffc658', '#ff7300', '#0088aa', '#ff0000', '#f56342', '#82ca9d', '#ffc658', '#ff7300', '#0088aa', '#ff0000']
+    const colors = ['#AF2424', '#9A3503', '#966E0E', '#828A0F', '#3B7304', '#FA062E', '#3B0192', '#10535D', '#860DF8', '#24402D' ]
     return (
         <div className="barchart-total-container">
             <div>
@@ -89,23 +89,31 @@ const Barchats = () => {
             <form onSubmit={handileSubmit} className="barchat-search-container">
                 <input onChange={(e) => setFromDate(e.target.value)} type="date" className="barchat-date" />
                 <input onChange={(e) => setToDate(e.target.value)} type="date" className="barchat-date" />
-                <button type="submit" className="barchat-button">Search Name</button>
+                <button type="submit" className="barchat-button">Search Date</button>
                 <button type="button" onClick={onClickGenarateReport} className="barchat-report-button">Excel Report</button>
 
             </form>
             <h1 className="analytics-repors-heading">Analytics Reports from <span className="submittion-date">{fromDate}</span> to <span className="submittion-date">{toDate}</span></h1>
-
+            <hr />
             <div className="barchat-container">
                 {data.length === 0 ? <p>No Data Found</p> : <>
-                    <BarChart width={500} height={250} data={data}>
-                        <XAxis dataKey="recruiter" stroke="#8884d8" />
+                    <BarChart
+                        width={550}
+                        height={350}
+                        data={data}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                    >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="recruiter" />
                         <YAxis />
                         <Tooltip />
-                        <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-                        <Bar dataKey="submittions" barSize={30}>
-                            {data.map((entry, index) => (
-                                <Bar key={index} name={entry.recruiter} fill={colors[index]} />
-                            ))}
+                        <Legend />
+                        <Bar barSize={30} dataKey="submittions" fill="#8884d8" >
+                            {
+                                data.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                                ))
+                            }
                         </Bar>
                     </BarChart>
                     <ResponsiveContainer width="40%" height={300}>
@@ -120,7 +128,7 @@ const Barchats = () => {
                                 outerRadius="70%"
                                 dataKey="submittions"
                             >
-                                {data.map((each, index) => (<Cell name={each.recruiter} fill={colors[index]} key={index} />))}
+                                {data.map((each, index) => (<Cell name={each.recruiter} fill={colors[colors.length - 1 - index]} key={index} />))}
                             </Pie>
                             <Tooltip />
                             <Legend

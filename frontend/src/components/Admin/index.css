@@ -237,7 +237,7 @@ td{
     cursor: pointer;
 }
 .action-edit-button{
-    background-color: rgb(200, 200, 7);
+    background-color: #04AA6D;
 }
 .action-delete-button{
     background-color: red;
@@ -287,4 +287,9 @@ td{
 }
 .no-data-reaction{
     text-align: center;
+}
+td{
+    border-bottom:1px solid black;
+    background-color: rgb(247, 248, 248);
+    width: 30vw;
 }

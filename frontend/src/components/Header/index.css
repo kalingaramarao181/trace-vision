@@ -23,3 +23,14 @@
     height: 5vh;
     width: 8vw;
 }
+.logs-button-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 20vw;
+    justify-content: space-between;
+}
+.admin-path{
+    color: white;
+    font-size: 2vw;
+}

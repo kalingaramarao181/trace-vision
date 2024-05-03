@@ -101,6 +101,7 @@ app.get('/hotlist-application-data', (req, res) => {
     });
 });
 
+
 //GET DATA FROM JOBS (JOBS)
 app.get('/jobs-application-data', (req, res) => {
     // Fetch data from the database
@@ -291,6 +292,48 @@ app.get("/barchat-data", (req, res) => {
     })
 })
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//GET SEARCHED DATA
+//GET DATA FROM ALL TABLES FOR EXCEL
+app.get('/application-search-data', (req, res) => {
+    // Fetch data from the database
+    const query = req.query.search
+    let tablename = req.query.tablename
+    let sql
+    if (tablename === "Recruiting"){
+        sql = `SELECT * FROM applications WHERE category = 'Recruiting' AND (recruitername LIKE ? OR candidatename LIKE ?)`;
+    }else if (tablename === "Bench"){
+        sql = `SELECT * FROM applications WHERE category = 'Bench' AND (recruitername LIKE ? OR candidatename LIKE ?)`;
+    }else if (tablename === "Hot"){
+        sql = `SELECT * FROM hotlistapplication WHERE technology LIKE ? OR candidatename LIKE ?`;
+    }else if (tablename === "Jobs"){
+        sql = `SELECT * FROM jobs WHERE clientname LIKE ? OR recruitername LIKE ?`;
+    }else if (tablename === "Prime"){
+        sql = `SELECT * FROM primevenders WHERE recruitername LIKE ? OR vendorcompany LIKE ?`;
+    }else if (tablename === "Clients"){
+        sql = `SELECT * FROM clients WHERE recruitername LIKE ? OR clientname LIKE ?`;
+    }else if (tablename === "Candidates"){
+        sql = `SELECT * FROM candidates WHERE candidatename LIKE ? OR positiontitle LIKE ?`;
+    }else if (tablename === "Training"){
+        sql = `SELECT * FROM training WHERE candidatename LIKE ? OR coursename LIKE ?`;
+    }else if (tablename === "Interview"){
+        sql = `SELECT * FROM interview WHERE recruitername LIKE ? OR candidatename LIKE ?`;
+    }else if (tablename === "Users"){
+        sql = `SELECT * FROM userdata WHERE username LIKE ? OR email LIKE ?`;
+    }else{
+        sql = `SELECT * FROM applications WHERE recruitername LIKE ? OR candidatename LIKE ?`;
+    }
+    const values = [`%${query}%`, `%${query}%`]
+    db.query(sql,values, (err, result) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            console.log(err);
+            return;
+        }
+        res.json(result);
+    });
+});
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //POST
 
@@ -444,7 +487,7 @@ app.post('/candidates-form', upload.fields([
     const visaPath = req.files['visa'] ? "uploads/" + req.files['visa'][0].filename : "";
     const values = [category, submittiondate, candidatename, emailid, phonenumber, positiontitle, visastatus, notes, resumePath, r2rPath, drivingPath, visaPath]
 
-    const sql = 'INSERT INTO candidates (`category`, `submittiondate`, `candidatename`, `emailid`, `phonenumber`, `positiontitle`, `visastatus`, `notes`, `resumepath`, `r2rpath`, `drivinglicensepath`, `visapath`) VALUES (?)';
+    const sql = 'INSERT INTO candidates (`category`, `submissiondate`, `candidatename`, `emailid`, `phonenumber`, `positiontitle`, `visastatus`, `notes`, `resumepath`, `r2rpath`, `drivinglicensepath`, `visapath`) VALUES (?)';
     db.query(sql, [values], (err, result) => {
         if (err) {
             console.error('Error inserting data into database:', err);
@@ -957,12 +1000,13 @@ app.post('/trashbin', (req, res) => {
 app.post('/trashbin-to', (req, res) => {
     const reqObj = req.body
     delete reqObj.id
+    let tablename
     if (reqObj.category === "Recruiting"){
-        reqObj.category = "applications"
+        tablename = "applications"
     }else if(reqObj.category === "Bench"){
-        reqObj.category = "applications"
+        tablename = "applications"
     }
-    const sql = `INSERT INTO ${reqObj.category.charAt(0).toLowerCase() + reqObj.category.slice(1)} 
+    const sql = `INSERT INTO ${tablename !== undefined ? tablename : reqObj.category.charAt(0).toLowerCase() + reqObj.category.slice(1)} 
     (${Object.keys(reqObj).map(each => each )}) VALUES (?)`
     console.log(sql);
     const values = Object.values(reqObj)
@@ -989,7 +1033,7 @@ app.delete('/delete-trashbin/:appId', (req, res) => {
     });
 });
 
-
+// DELETE ALL FROM TRASHBIN (SRASHBIN USER)
 app.delete('/delete-trashbin-all', (req, res) => {
     const sql = "DELETE FROM trashbin";
     db.query(sql, (err, data) => {

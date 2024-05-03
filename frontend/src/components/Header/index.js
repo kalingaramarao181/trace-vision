@@ -15,8 +15,8 @@ const Header = (props) => {
             <Link to="/">
                 <img className="navbar-logo" src="\images\trace-vision.png" alt="App Logo"/>
             </Link>
-            {lock !== undefined ? <button type="button" onClick={onClickLogout} className="navbar-login-button">Logout</button>: 
-            <Link to="/login"><button type="button" className="navbar-login-button">Login</button></Link>}
+                {lock !== undefined ? <button type="button" onClick={onClickLogout} className="navbar-login-button">Logout</button>: 
+                <Link to="/login"><button type="button" className="navbar-login-button">Login</button></Link>}
         </div>
     )
 }

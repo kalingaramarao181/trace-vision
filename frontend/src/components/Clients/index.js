@@ -185,11 +185,6 @@ const Clients = (props) => {
             .catch(err => console.log(err))
     }
 
-    //OPEN FILE 
-    const openFile = (filePath) => {
-        window.open(filePath, '_blank');
-    }
-
     //DATA VIEW POPUP
     const dataVewPopup = () => {
         return (
