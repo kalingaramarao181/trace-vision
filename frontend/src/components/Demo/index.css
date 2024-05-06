@@ -1,0 +1,14 @@
+/* styles.css */
+.truck-animation {
+    animation: moveTruck 3s linear forwards;
+  }
+  
+  @keyframes moveTruck {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  

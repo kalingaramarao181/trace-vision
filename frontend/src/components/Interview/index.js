@@ -105,7 +105,7 @@ const Interview = (props) => {
                                             </select>
                                         </td>
                                     </tr>
-                                    <tr className="applicaton-data-name"><td>Interview Date: </td><td><span className="application-data-span">{viewData.interviewdate}</span></td>
+                                    <tr className="applicaton-data-name"><td>Interview Date: </td><td><span className="application-data-span">{new Date(viewData.interviewdate).toLocaleDateString('en-US')}</span></td>
                                         <td>
                                             <input name="interviewdate" onChange={handleEditFormData} type="text" className="tw-input" />
                                         </td>
@@ -234,7 +234,7 @@ const Interview = (props) => {
                             <table>
                                 <tbody>
                                     <tr className="applicaton-data-name"><td>Applied For: </td><td><span className="application-data-span">{viewData.category}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Interview Date: </td><td><span className="application-data-span">{viewData.interviewdate}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Interview Date: </td><td><span className="application-data-span">{new Date(viewData.interviewdate).toLocaleDateString('en-US')}</span></td></tr>
                                     <tr className="applicaton-data-name"><td>Interview Slot: </td><td><span className="application-data-span">{viewData.interviewslot}</span></td></tr>
                                     <tr className="applicaton-data-name"><td>Interview Mode: </td><td><span className="application-data-span">{viewData.interviewmode}</span></td></tr>
                                     <tr className="applicaton-data-name"><td>Recruiter Name: </td><td><span className="application-data-span">{viewData.recruitername}</span></td></tr>
@@ -298,7 +298,7 @@ const Interview = (props) => {
                         return <tr key={index}>
                             <td className="data-view-table-data">{index + 1}</td>
                             <td className="data-view-table-data data-view-table-data-submittion">
-                                <p className="applicaton-data-name">Date: <span className="application-data-span">{eachApplication.interviewdate}</span></p>
+                                <p className="applicaton-data-name">Date: <span className="application-data-span">{new Date(eachApplication.interviewdate).toLocaleDateString('en-US')}</span></p>
                                 <p className="applicaton-data-name">Interview Slot: <span className="application-data-span">{eachApplication.interviewslot}</span></p>
                                 <p className="applicaton-data-name">Interview Mode: <span className="application-data-span">{eachApplication.interviewmode}</span></p>
                                 <p className="applicaton-data-name">Phone No: <span className="application-data-span">{eachApplication.vendorphonenumber}</span></p>

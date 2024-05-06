@@ -79,6 +79,9 @@ td{
     padding: 1vw;
     cursor: pointer;
 }
+.tw-add-button:hover{
+    background-color: rgb(7, 148, 148);
+}
 .tw-generate-button-bar{
     display: flex;
     flex-direction: row;
@@ -90,7 +93,7 @@ td{
 }
 .tw-generate-button{
     color: white;
-    background-color: rgb(70, 74, 2);
+    background-color: #17a2b8;
     border-radius: 5px;
     border: none;
     width: 12vw;
@@ -98,9 +101,12 @@ td{
     margin-right: 1vw;
     cursor: pointer;
 }
+.tw-generate-button:hover{
+    background-color: #085662;
+}
 .tw-generate-employe-button{
     color: white;
-    background-color: rgb(3, 63, 95);
+    background-color: #007bff;
     border-radius: 5px;
     border: none;
     width: 18vw;
@@ -108,14 +114,20 @@ td{
     margin-right: 1vw;
     cursor: pointer;
 }
+.tw-generate-employe-button:hover{
+    background-color: #023e7e;
+}
 .tw-pie-chart-button{
-    color: white;
-    background-color: rgb(1, 62, 19);
+    color: black;
+    background-color: #ffc107;
     border-radius: 5px;
     border: none;
     width: 12vw;
     height: 4.5vh;
     margin-right: 1vw;
+}
+.tw-pie-chart-button:hover{
+    background-color: #c0930c;
 }
 .tw-admin-popup-container{
     background-color: white;
@@ -170,7 +182,6 @@ td{
     color: white;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
-
 }
 .tw-file-input{
     padding: 1vh;
@@ -191,6 +202,9 @@ td{
     width: 8vw;
     height: 5vh;
 }
+.popup-save:hover{
+    background-color: rgb(82, 73, 246);
+}
 .popup-close{
     background-color:grey;
     color: white;
@@ -200,6 +214,9 @@ td{
     margin-right: 1vw;
     width: 8vw;
     height: 5vh;
+}
+.popup-close:hover{
+    background-color: rgb(56, 54, 54);
 }
 .tw-form-container{
     display: flex;
@@ -236,11 +253,20 @@ td{
     background-color: blue;
     cursor: pointer;
 }
+.action-view-button:hover{
+    background-color: rgb(46, 46, 252);
+}
 .action-edit-button{
-    background-color: #04AA6D;
+    background-color: #007bff;
+}
+.action-edit-button:hover{
+    background-color: #0453a7;
 }
 .action-delete-button{
     background-color: red;
+}
+.action-delete-button:hover{
+    background-color: rgb(145, 6, 6);
 }
 
 .applicaton-data-name{
@@ -292,4 +318,70 @@ td{
     border-bottom:1px solid black;
     background-color: rgb(247, 248, 248);
     width: 30vw;
+}
+.dropdown-trigger {
+    position: relative;
+}
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 12vw; /* Set the width of the dropdown menu */
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+.dropdown-button{
+    border: none;
+    width: 13vw;
+    height: 5.2vh;
+    background-color: #120aeb;
+    color: white;
+    border-radius: 5px;
+    margin-top: 3.2vh;
+}
+.dropdown-item{
+    border: none;
+    width: 12vw;
+    height: 5.2vh;
+    background-color: #120aeb;
+    color: white;
+}
+.dropdown-item:hover{
+    background-color: #413bf7;
+}
+.dropdown-button1{
+    border: none;
+    width: 15vw;
+    height: 5.2vh;
+    background-color: #120aeb;
+    color: white;
+    border-radius: 5px;
+    margin-top: 3.2vh;
+}
+
+@media only screen and (max-width: 768px) {
+    .admin-sidebar{
+        height: 40vh;
+    }
+    .action-view-button, .action-edit-button, .action-delete-button{
+        width: 4vw;
+        height: 1.5vh;
+        border-radius: 2px;
+        padding: 2px;
+    }
+    .mobil-view-buttons{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        height: 7vh;
+        width: 10vw;
+    }
+    .tw-generate-button-bar, .tw-generate-button, .tw-generate-employe-button{
+        width: none;
+        height: 3vh;
+    }
 }

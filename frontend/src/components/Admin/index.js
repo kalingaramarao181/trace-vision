@@ -15,6 +15,7 @@ import Candidate from "../Candidates";
 import Training from "../Training";
 import Interview from "../Interview";
 import TrashBin from "../TrashBin";
+import CandidateOnboarding from "../CandidateOnboarding";
 const baseUrl = config.baseUrl
 
 const Admin = (props) => {
@@ -27,6 +28,10 @@ const Admin = (props) => {
     const [isOpenCandidatesForm, setIsOpenCandidatesForm] = useState(false);
     const [isOpenTrainingForm, setIsOpenTrainingForm] = useState(false);
     const [isOpenInterviewForm, setIsOpenInterviewForm] = useState(false);
+    const [isOpenCandidateOnboardingForm, setIsOpenCandidateOnboardingForm] = useState(false);
+
+    const [isW2DropdownOpen, setIsW2DropdownOpen] = useState(false)
+    const [is1099DropdownOpen, setIs1099DropdownOpen] = useState(false)
 
     
     const [isOpenDataView, setIsOpenDataView] = useState(false);
@@ -52,6 +57,8 @@ const Admin = (props) => {
     const [candidatesForm, setCandidatesForm] = useState({})
     const [trainingForm, setTrainingForm] = useState({})
     const [interviewForm, setInterviewForm] = useState({})
+    const [candidateOnboardingForm, setCandidateOnboardingForm] = useState({})
+
 
 
     useEffect(() => {
@@ -129,6 +136,11 @@ const Admin = (props) => {
         setCandidatesForm({...candidatesForm, [e.target.name]: e.target.value})
     }
 
+    //HANDLE CANDIDATE ONBOARDING FORM TEXT
+    const handleCandidateOnboardingFormData = (e) => {
+        setCandidateOnboardingForm({...candidateOnboardingForm, [e.target.name]: e.target.value})
+    }
+
     //HANDLE USER FORM TEXT
     const handleUserFormData = (e) => {
         setFormUser({ ...formUser, [e.target.name]: e.target.value })
@@ -154,6 +166,12 @@ const Admin = (props) => {
     //HANDLE CANDIDATES FORM FILES
     const handleCandidatesFileData = (e) => {
         setCandidatesForm({ ...candidatesForm, [e.target.name]: e.target.files[0]})
+    }
+
+
+    //HANDLE CANDIDATE ONBOARDING FORM FILES
+    const handleCandidateOnboardingFileData = (e) => {
+        setCandidateOnboardingForm({ ...candidateOnboardingForm, [e.target.name]: e.target.files[0]})
     }
 
 
@@ -380,6 +398,27 @@ const Admin = (props) => {
         }
     }
 
+    //SUBMIT CANDIDATE ONBOARDING LIST FORM
+    const handleSubmitCandidateOnboarding = async (e) => {
+        e.preventDefault()
+        const formData = new FormData();
+        Object.entries(candidateOnboardingForm).forEach(([key, value]) => {
+            formData.append(key, value)
+        });
+
+        try {
+            await axios.post(`${baseUrl}candidate-onboarding-form`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            alert('Application submitted successfully');
+            window.location.reload()
+        } catch (error) {
+            console.error('Error submitting application:', error);
+        }
+    }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -412,6 +451,11 @@ const Admin = (props) => {
         window.open(filePath, '_blank');
     }
 
+    //OPEN FILE 
+    const handleOptionFile = (filePath) => {
+        window.open(baseUrl + "Files" + filePath, '_blank');
+    }
+
     //DOWNLOAD EXCEL
     const downloadExcel = async () => {
         let excelData = []
@@ -437,7 +481,6 @@ const Admin = (props) => {
     
         // GENERATE EXCEL FILE AND TRIGGER DOWNLOAD
         await XLSX.writeFile(wb, `${sidebarStatus}-${searchValue}.xlsx`);
-        console.log(excelData);
       };
 
 
@@ -1309,6 +1352,160 @@ const Admin = (props) => {
             )
     }
 
+    //ADD CANDIDATE ONBOARDING FORM
+    const hotCandidateOnboardingPopup = () => {
+        return (
+                <Popup
+                    open={isOpenCandidateOnboardingForm}
+                    onClose={() => setIsOpenCandidateOnboardingForm(false)}
+                    closeOnDocumentClick
+                    contentStyle={{
+                        width: "40vw",
+                        padding: '3.5vw',
+                        borderRadius: '10px',
+                        boxShadow: '0 6px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+                        transition: 'opacity 0.5s ease-in-out', // Transition effect for opacity
+                        backgroundColor: "white",
+                        height: "80vh",
+                        overflowY: "auto",
+                        scrollbarWidth: "none", /* Firefox */
+                    }}
+                >
+                    {close => (
+                        <div className="tw-admin-popup-container">
+                            <div>
+                                <h1>Application</h1>
+                                <form onSubmit={handleSubmitCandidateOnboarding} className="tw-form-container">
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">Category:</label>
+                                        <select name="category" onChange={handleCandidateOnboardingFormData} className="tw-select" required>
+                                            <option value="">--Select Category--</option>
+                                            <option value="Recruiting">Recruiting</option>
+                                            <option value="Bench">Bench</option>
+                                            <option value="Hot">Hot</option>
+                                            <option value="Jobs">Jobs</option>
+                                            <option value="Prime">Prime</option>
+                                            <option value="Training">Training</option>
+                                            <option value="Interview">Interview</option>
+                                            <option value="CandidateOnboarding">Candidate Onboarding</option>
+                                            <option value="VendorOnboarding">Vendor Onboarding</option>
+                                            <option value="Immigration">Immigration</option>
+                                        </select>
+                                    </div>
+                                    <div className="tw-input-pack-container">
+                                    <div className="tw-input-container">
+                                            <label className="tw-label">Candidate Name</label>
+                                            <input name="candidatename" onChange={handleCandidateOnboardingFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Email Address</label>
+                                            <input name="emailaddress" onChange={handleCandidateOnboardingFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Phone Number</label>
+                                            <input name="phonenumber" onChange={handleCandidateOnboardingFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                    </div>
+                                    <div className="tw-input-pack-container">
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">SSN</label>
+                                            <input name="ssn" onChange={handleCandidateOnboardingFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <div 
+                                                className="dropdown-trigger"
+                                                onMouseEnter={() => setIsW2DropdownOpen(true)}
+                                                onMouseLeave={() => setIsW2DropdownOpen(false)}>
+                                                <button className="dropdown-button" type="button">Download W2 Forms</button>
+                                                {isW2DropdownOpen && (
+                                                    <div className="dropdown-menu">
+                                                        <button type="button" className="dropdown-item" onClick={() => handleOptionFile("/trace-vision.png")}>I-9 form</button>
+                                                        <button type="button" className="dropdown-item" onClick={() => handleOptionFile("option2")}>W4 Form</button>
+                                                        <button type="button" className="dropdown-item" onClick={() => handleOptionFile("option3")}>Bank Details</button>
+                                                        <button type="button" className="dropdown-item" onClick={() => handleOptionFile("option3")}>ADP Employee Form</button>
+                                                        <button type="button" className="dropdown-item" onClick={() => handleOptionFile("option3")}>Medical EnrollForm</button>
+                                                        <button type="button" className="dropdown-item" onClick={() => handleOptionFile("option3")}>Employee Hand Book</button>
+                                                        <button type="button" className="dropdown-item" onClick={() => handleOptionFile("option3")}>Offer Letter</button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="tw-input-container">
+                                        <div 
+                                                className="dropdown-trigger"
+                                                onMouseEnter={() => setIs1099DropdownOpen(true)}
+                                                onMouseLeave={() => setIs1099DropdownOpen(false)}>
+                                                <button className="dropdown-button" type="button">Download 1099 Forms</button>
+                                                {is1099DropdownOpen && (
+                                                    <div className="dropdown-menu">
+                                                        <button type="button" className="dropdown-item" onClick={() => handleOptionFile("/trace-vision.png")}>W9 Form</button>
+                                                        <button type="button" className="dropdown-item" onClick={() => handleOptionFile("option2")}>COL Form</button>
+                                                        <button type="button" className="dropdown-item" onClick={() => handleOptionFile("option3")}>Bank Details</button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="tw-input-container">
+                                    <button className="dropdown-button1" type="button">Download Statewise W4 Forms</button>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="passport" name="passport" type="file" onChange={handleCandidateOnboardingFileData} className="tw-file-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="passport">Passport</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="drivinglicense" name="drivinglicense" type="file" onChange={handleCandidateOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="drivinglicense">Driving Lisense</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="photo" name="photo" type="file" onChange={handleCandidateOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="photo">Photo</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="i9" name="i9" type="file" onChange={handleCandidateOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="i9">I9</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="w4" name="w4" type="file" onChange={handleCandidateOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="w4">W4</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="bankahcform" name="bankahcform" type="file" onChange={handleCandidateOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="bankahcform">Bank AHC Form</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="adpform" name="adpform" type="file" onChange={handleCandidateOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="adpform">ADP Form</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="medicalenrollmentform" name="medicalenrollmentform" type="file" onChange={handleCandidateOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="medicalenrollmentform">Medical Inrollment Form</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="experience" name="experience" type="file" onChange={handleCandidateOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="experience">Experience</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="employeehandbook" name="employeehandbook" type="file" onChange={handleCandidateOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="employeehandbook">Employee Handbook</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="offerletter" name="offerletter" type="file" onChange={handleCandidateOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="offerletter">Offer Letter</label>
+                                    </div>
+                                    <div className="tw-popup-button-container">
+                                        <button type="submit" className="popup-save">Save</button>
+                                        <button type="button" onClick={() => setIsOpenCandidateOnboardingForm(false)} className="popup-close">Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+                </Popup>
+            )
+    }
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //APPLICATION CRUD POPUPS
@@ -1356,7 +1553,7 @@ const Admin = (props) => {
                                             </select>
                                         </td>
                                     </tr>
-                                    <tr className="applicaton-data-name"><td>Date: </td><td><span className="application-data-span">{viewData.submittiondate}</span></td>
+                                    <tr className="applicaton-data-name"><td>Date: </td><td><span className="application-data-span">{new Date(viewData.submittiondate).toLocaleDateString('en-US')}</span></td>
                                         <td>
                                             <input name="submittiondate" onChange={handleEditFormData} type="date" className="tw-input" />
                                         </td>
@@ -1462,7 +1659,7 @@ const Admin = (props) => {
                             <table>
                                 <tbody>
                                     <tr className="applicaton-data-name"><td>Applied For: </td><td><span className="application-data-span">{viewData.category}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Date: </td><td><span className="application-data-span">{viewData.submittiondate}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Date: </td><td><span className="application-data-span">{new Date(viewData.submittiondate).toLocaleDateString('en-US')}</span></td></tr>
                                     <tr className="applicaton-data-name"><td>Recruiter Name: </td><td><span className="application-data-span">{viewData.recruitername}</span></td></tr>
                                     <tr className="applicaton-data-name"><td>Candidate Name: </td><td><span className="application-data-span">{viewData.candidatename}</span></td></tr>
                                     <tr className="applicaton-data-name"><td>Client Name: </td><td><span className="application-data-span">{viewData.clientname}</span></td></tr>
@@ -1507,13 +1704,13 @@ const Admin = (props) => {
                             return <tr key={index}>
                                 <td className="data-view-table-data">{index + 1}</td>
                                 <td className="data-view-table-data data-view-table-data-submittion">
-                                    <p className="applicaton-data-name">Date: <span className="application-data-span">{eachApplication.submittiondate}</span></p>
+                                    <p className="applicaton-data-name">Date: <span className="application-data-span">{new Date(eachApplication.submittiondate).toLocaleDateString('en-US')}</span></p>
                                     <p className="applicaton-data-name">Applied For: <span className="application-data-span">{eachApplication.category}</span></p>
                                     <p className="applicaton-data-name">Client Name: <span className="application-data-span">{eachApplication.clientname}</span></p>
                                 </td>
                                 <td className="data-view-table-data">{eachApplication.recruitername}</td>
                                 <td className="data-view-table-data">{eachApplication.candidatename}</td>
-                                <td className="data-view-table-data">
+                                <td className="data-view-table-data mobil-view-buttons">
                                     <button onClick={() => onClickDataView(eachApplication.id)} className="action-view-button">View</button>
                                     <button onClick={() => onClickEditUser(eachApplication.id, eachApplication)} className="action-edit-button">Edit</button>
                                     <button onClick={() => deleteAlert(eachApplication.id, eachApplication)} className="action-delete-button">Delete</button>
@@ -1541,6 +1738,8 @@ const Admin = (props) => {
             return <Training searchValueData={searchValue}/>
         }else if (sidebarStatus === "Interview"){
             return <Interview searchValueData={searchValue}/>
+        }else if (sidebarStatus === "CandidateOnboarding"){
+            return <CandidateOnboarding searchValueData={searchValue}/>
         }else if (sidebarStatus === "Trashbin"){
             return <TrashBin searchValueData={searchValue}/>
         }
@@ -1555,17 +1754,19 @@ const Admin = (props) => {
             case "Hot":
                 return <button onClick={() => setIsOpenHotForm(true)} className="tw-add-button">+ Add New</button>
             case "Jobs":
-                return <button onClick={() => setIsOpenJobsForm(true)} className="tw-add-button">+ Add User</button>;
+                return <button onClick={() => setIsOpenJobsForm(true)} className="tw-add-button">+ Add New</button>;
             case "Prime":
-                return <button onClick={() => setIsOpenPrimeForm(true)} className="tw-add-button">+ Add User</button>;
+                return <button onClick={() => setIsOpenPrimeForm(true)} className="tw-add-button">+ Add New</button>;
             case "Clients":
-                return <button onClick={() => setIsOpenClientsForm(true)} className="tw-add-button">+ Add User</button>;
+                return <button onClick={() => setIsOpenClientsForm(true)} className="tw-add-button">+ Add New</button>;
             case "Candidates":
-                return <button onClick={() => setIsOpenCandidatesForm(true)} className="tw-add-button">+ Add User</button>;
+                return <button onClick={() => setIsOpenCandidatesForm(true)} className="tw-add-button">+ Add New</button>;
             case "Training":
-                return <button onClick={() => setIsOpenTrainingForm(true)} className="tw-add-button">+ Add User</button>;
+                return <button onClick={() => setIsOpenTrainingForm(true)} className="tw-add-button">+ Add New</button>;
             case "Interview":
-                return <button onClick={() => setIsOpenInterviewForm(true)} className="tw-add-button">+ Add User</button>;
+                return <button onClick={() => setIsOpenInterviewForm(true)} className="tw-add-button">+ Add New</button>;
+            case "CandidateOnboarding":
+                return <button onClick={() => setIsOpenCandidateOnboardingForm(true)} className="tw-add-button">+ Add New</button>;
             case "Users":
                 return <button onClick={() => setIsOpenUserForm(true)} className="tw-add-button">+ Add User</button>;
             default:
@@ -1583,10 +1784,10 @@ const Admin = (props) => {
         <div className="tw-admin-container">
             <div className="admin-sidebar">
                 <button style={{ backgroundColor: sidebarStatus === "Recruiting" && "#0E0C49" }} onClick={() => onClickSidebarButton("Recruiting")} className="admin-sidebar-button">Recruiting</button>
-                <button style={{ backgroundColor: sidebarStatus === "Bench" && "#0E0C49" }} onClick={() => onClickSidebarButton("Bench")} className="admin-sidebar-button">Bench</button>
-                <button style={{ backgroundColor: sidebarStatus === "Hot" && "#0E0C49" }} onClick={() => onClickSidebarButton("Hot")} className="admin-sidebar-button">Hot</button>
+                <button style={{ backgroundColor: sidebarStatus === "Bench" && "#0E0C49" }} onClick={() => onClickSidebarButton("Bench")} className="admin-sidebar-button">Bench Sales</button>
+                <button style={{ backgroundColor: sidebarStatus === "Hot" && "#0E0C49" }} onClick={() => onClickSidebarButton("Hot")} className="admin-sidebar-button">Hot List</button>
                 <button style={{ backgroundColor: sidebarStatus === "Jobs" && "#0E0C49" }} onClick={() => onClickSidebarButton("Jobs")} className="admin-sidebar-button">Jobs</button>
-                <button style={{ backgroundColor: sidebarStatus === "Prime" && "#0E0C49" }} onClick={() => onClickSidebarButton("Prime")} className="admin-sidebar-button">Prime </button>
+                <button style={{ backgroundColor: sidebarStatus === "Prime" && "#0E0C49" }} onClick={() => onClickSidebarButton("Prime")} className="admin-sidebar-button">Prime Vendors</button>
                 <button style={{ backgroundColor: sidebarStatus === "Clients" && "#0E0C49" }} onClick={() => onClickSidebarButton("Clients")} className="admin-sidebar-button">Clients</button>
                 <button style={{ backgroundColor: sidebarStatus === "Candidates" && "#0E0C49" }} onClick={() => onClickSidebarButton("Candidates")} className="admin-sidebar-button">Candidates</button>
                 <button style={{ backgroundColor: sidebarStatus === "Training" && "#0E0C49" }} onClick={() => onClickSidebarButton("Training")} className="admin-sidebar-button">Training</button>
@@ -1622,6 +1823,7 @@ const Admin = (props) => {
                 {candidatesFormPopup()}
                 {trainingFormPopup()}
                 {interviewFormPopup()}
+                {hotCandidateOnboardingPopup()}
                 {dataEditPopup()}
             </div>
         </div>

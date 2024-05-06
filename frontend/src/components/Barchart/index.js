@@ -91,9 +91,8 @@ const Barchats = () => {
                 <input onChange={(e) => setToDate(e.target.value)} type="date" className="barchat-date" />
                 <button type="submit" className="barchat-button">Search Date</button>
                 <button type="button" onClick={onClickGenarateReport} className="barchat-report-button">Excel Report</button>
-
             </form>
-            <h1 className="analytics-repors-heading">Analytics Reports from <span className="submittion-date">{fromDate}</span> to <span className="submittion-date">{toDate}</span></h1>
+            <h1 className="analytics-repors-heading">Analytics Reports from <span className="submittion-date">{fromDate !==  "" ?  new Date(fromDate).toLocaleDateString('en-US') : ""}</span> to <span className="submittion-date">{toDate !== "" ? new Date(fromDate).toLocaleDateString('en-US') : ""}</span></h1>
             <hr />
             <div className="barchat-container">
                 {data.length === 0 ? <p>No Data Found</p> : <>

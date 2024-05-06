@@ -108,7 +108,7 @@ const Jobs = (props) => {
                                             </select>
                                         </td>
                                     </tr>
-                                    <tr className="applicaton-data-name"><td>Recruitment Date: </td><td><span className="application-data-span">{viewData.recruitmentdate}</span></td>
+                                    <tr className="applicaton-data-name"><td>Recruitment Date: </td><td><span className="application-data-span">{new Date(viewData.recruitmentdate).toLocaleDateString('en-US')}</span></td>
                                         <td>
                                             <input name="recruitmentdate" onChange={handleEditFormData} type="text" className="tw-input" />
                                         </td>
@@ -212,7 +212,7 @@ const Jobs = (props) => {
                             <table>
                                 <tbody>
                                     <tr className="applicaton-data-name"><td>Category: </td><td><span className="application-data-span">{viewData.category}</span></td></tr>
-                                    <tr className="applicaton-data-name"><td>Recruitment Date: </td><td><span className="application-data-span">{viewData.recruitmentdate}</span></td></tr>
+                                    <tr className="applicaton-data-name"><td>Recruitment Date: </td><td><span className="application-data-span">{new Date(viewData.recruitmentdate).toLocaleDateString('en-US')}</span></td></tr>
                                     <tr className="applicaton-data-name"><td>Position Title: </td><td><span className="application-data-span">{viewData.positiontitle}</span></td></tr>
                                     <tr className="applicaton-data-name"><td>Client Name: </td><td><span className="application-data-span">{viewData.clientname}</span></td></tr>
                                     <tr className="applicaton-data-name"><td>Recruiter Name: </td><td><span className="application-data-span">{viewData.recruitername}</span></td></tr>
@@ -272,7 +272,7 @@ const Jobs = (props) => {
                             return <tr key={index}>
                                 <td className="data-view-table-data">{index + 1}</td>
                                 <td className="data-view-table-data data-view-table-data-submittion">
-                                    <p className="applicaton-data-name">Recruitment Date: <span className="application-data-span">{eachApplication.recruitmentdate}</span></p>
+                                    <p className="applicaton-data-name">Recruitment Date: <span className="application-data-span">{new Date(eachApplication.recruitmentdate).toLocaleDateString('en-US')}</span></p>
                                     <p className="applicaton-data-name">Applied For: <span className="application-data-span">{eachApplication.category}</span></p>
                                 </td>
                                 <td className="data-view-table-data">{eachApplication.recruitername}</td>

@@ -23,7 +23,7 @@ const Login = (props) => {
             if (res.data === true) {
                 history.push("/admin");
                 //  COOKIES ARE USED TO  LOGIN AND LOGOUT PURPOSE FIRST SET (CREATE) COOKIES AND NEXT CODE IS HEADER.JS
-                Cookies.set("lock", `${data.username}`, { expires: 30 });
+                Cookies.set("lock", `${data.username}`, { expires:  30/1440});
             } else {
                 alert("wrong password or username");    
             }

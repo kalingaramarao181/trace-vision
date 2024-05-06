@@ -6,6 +6,7 @@ import Admin from './components/Admin'
 import Barchats from './components/Barchart';
 import Login from './components/Login';
 import Secure from './components/Secure';
+import Demo from './components/Demo';
 
 function App() {
   return (
@@ -16,6 +17,8 @@ function App() {
         <Secure path='/admin' exact component={Admin} />
         <Route path='/barchart' exact component={Barchats} />
         <Route path="/login" exact component={Login} />
+        <Route path="/demo" exact component={Demo} />
+
       </Switch>
     </BrowserRouter>
   );

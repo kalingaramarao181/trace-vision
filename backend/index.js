@@ -33,6 +33,8 @@ app.use((req, res, next) => {
 
 // Serve static files from the 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/Files', express.static(path.join(__dirname, 'files')));
+
 app.use(express.json())
 
 // Ensure uploads directory exists, if not create it
@@ -167,10 +169,23 @@ app.get('/training-application-data', (req, res) => {
     });
 });
 
-//GET DATA FROM INTERVIEW (TRAINING)
+//GET DATA FROM INTERVIEW (INTERVIEW)
 app.get('/interview-application-data', (req, res) => {
     // Fetch data from the database
     const sql = 'SELECT * FROM interview';
+    db.query(sql, (err, result) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(result);
+    });
+});
+
+//GET DATA FROM CANDIDATE ONBOARDING (CANDIDATE ONBOARDING)
+app.get('/candidate-onboarding-application-data', (req, res) => {
+    // Fetch data from the database
+    const sql = 'SELECT * FROM candidateonboarding';
     db.query(sql, (err, result) => {
         if (err) {
             res.status(500).json({ error: err.message });
@@ -263,6 +278,16 @@ app.get('/interview-application/:userId', (req, res) => {
     })
 })
 
+//GET DATA FROM CANDIDATE ONBOARDING USING ID (CANDIDATE ONBOARDING)
+app.get('/candidate-onboarding-application/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "SELECT * FROM candidateonboarding WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data[0])
+    })
+})
+
 //GET DATA FROM USERDATA USING ID (STAFF USER)
 app.get('/company-user/:userId', (req, res) => {
     const userId = req.params.userId
@@ -318,6 +343,8 @@ app.get('/application-search-data', (req, res) => {
         sql = `SELECT * FROM training WHERE candidatename LIKE ? OR coursename LIKE ?`;
     }else if (tablename === "Interview"){
         sql = `SELECT * FROM interview WHERE recruitername LIKE ? OR candidatename LIKE ?`;
+    }else if (tablename === "CandidateOnboarding"){
+        sql = `SELECT * FROM candidateonboarding WHERE emailaddress LIKE ? OR candidatename LIKE ?`;
     }else if (tablename === "Users"){
         sql = `SELECT * FROM userdata WHERE username LIKE ? OR email LIKE ?`;
     }else{
@@ -520,6 +547,53 @@ app.post('/interview-form', (req, res) => {
     const {category, interviewdate, recruitername, candidatename, technology, vendorrecruitername, vendorphonenumber, vendoremailid, endclient, interviewslot, interviewmode, position, billrate, feedback} = req.body;
     const values = [category, interviewdate, recruitername, candidatename, technology, vendorrecruitername, vendorphonenumber, vendoremailid, endclient, interviewslot, interviewmode, position, billrate, feedback]
     const sql = 'INSERT INTO interview (`category`, `interviewdate`, `recruitername`, `candidatename`, `technology`, `vendorrecruitername`, `vendorphonenumber`, `vendoremailid`, `endclient`, `interviewslot`, `interviewmode`, `position`, `billrate`, `feedback`) VALUES (?)';
+    db.query(sql, [values], (err, result) => {
+        if (err) {
+            console.error('Error inserting data into database:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data inserted successfully');
+        res.status(201).json({ message: 'Application submitted successfully' });
+    });
+});
+
+// POST TO CANDIDATE ONBOARDING (CANDIDATEONBORDING)
+app.post('/candidate-onboarding-form', upload.fields([
+    { name: 'passport', maxCount: 1 },
+    { name: 'drivinglicense', maxCount: 1 },
+    { name: 'photo', maxCount: 1 },
+    { name: 'i9', maxCount: 1 },
+    { name: 'w4', maxCount: 1 },
+    { name: 'bankahcform', maxCount: 1 },
+    { name: 'adpform', maxCount: 1 },
+    { name: 'medicalenrollmentform', maxCount: 1 },
+    { name: 'experience', maxCount: 1 },
+    { name: 'employeehandbook', maxCount: 1 },
+    { name: 'offerletter', maxCount: 1 },
+]), (req, res) => {
+    const { category, candidatename, emailaddress, phonenumber, ssn } = req.body;
+    const passportPath = req.files['passport'] ? "uploads/" + req.files['passport'][0].filename : "";
+    const drivingPath = req.files['drivinglicense'] ? "uploads/" + req.files['drivinglicense'][0].filename : "";
+    const photoPath = req.files['photo'] ? "uploads/" + req.files['photo'][0].filename : "";
+    const i9Path = req.files['i9'] ? "uploads/" + req.files['i9'][0].filename : "";
+    const w4Path = req.files['w4'] ? "uploads/" + req.files['w4'][0].filename : "";
+    const bankahcformPath = req.files['bankahcform'] ? "uploads/" + req.files['bankahcform'][0].filename : "";
+    const adpformPath = req.files['adpform'] ? "uploads/" + req.files['adpform'][0].filename : "";
+    const medicalenrollmentformPath = req.files['medicalenrollmentform'] ? "uploads/" + req.files['medicalenrollmentform'][0].filename : "";
+    const experiencePath = req.files['experience'] ? "uploads/" + req.files['experience'][0].filename : "";
+    const employeehandbookPath = req.files['employeehandbook'] ? "uploads/" + req.files['employeehandbook'][0].filename : "";
+    const offerletterPath = req.files['offerletter'] ? "uploads/" + req.files['offerletter'][0].filename : "";
+
+
+    const values = [
+        category, candidatename, emailaddress, phonenumber, 
+        ssn, passportPath, drivingPath, photoPath, i9Path,
+        w4Path, bankahcformPath, adpformPath, medicalenrollmentformPath, 
+        experiencePath, employeehandbookPath, offerletterPath
+     ]
+
+    const sql = 'INSERT INTO candidateonboarding (`category`, `candidatename`, `emailaddress`, `phonenumber`, `ssn`, `passport`, `drivinglicense`, `photo`, `i9`, `w4`, `bankahcform`, `adpform`, `medicalenrollmentform`, `experience`, `employeehandbook`, `offerletter`) VALUES (?)';
     db.query(sql, [values], (err, result) => {
         if (err) {
             console.error('Error inserting data into database:', err);
@@ -850,6 +924,74 @@ app.put('/update-interview-application/:userId', (req, res) => {
     });
 });
 
+//UPDATE CANDIDATE ONBOARDING (CANDIDATE)
+app.put('/update-candidate-onboarding-application/:userId', upload.fields([
+    { name: 'passport', maxCount: 1 },
+    { name: 'drivinglicense', maxCount: 1 },
+    { name: 'photo', maxCount: 1 },
+    { name: 'i9', maxCount: 1 },
+    { name: 'w4', maxCount: 1 },
+    { name: 'bankahcform', maxCount: 1 },
+    { name: 'adpform', maxCount: 1 },
+    { name: 'medicalenrollmentform', maxCount: 1 },
+    { name: 'experience', maxCount: 1 },
+    { name: 'employeehandbook', maxCount: 1 },
+    { name: 'offerletter', maxCount: 1 },
+
+]), (req, res) => {
+    const { userId } = req.params; // Extract the ID from the URL
+    const { category, candidatename, emailaddress, phonenumber, ssn } = req.body;
+    const passportPath = req.files['passport'] ? "uploads/" + req.files['passport'][0].filename : req.body.passport;
+    const drivingPath = req.files['drivinglicense'] ? "uploads/" + req.files['drivinglicense'][0].filename : req.body.drivinglicense;
+    const photoPath = req.files['photo'] ? "uploads/" + req.files['photo'][0].filename :  req.body.photo;
+    const i9Path = req.files['i9'] ? "uploads/" + req.files['i9'][0].filename :  req.body.i9;
+    const w4Path = req.files['w4'] ? "uploads/" + req.files['w4'][0].filename :  req.body.w4;
+    const bankahcformPath = req.files['bankahcform'] ? "uploads/" + req.files['bankahcform'][0].filename :  req.body.bankahcform;
+    const adpformPath = req.files['adpform'] ? "uploads/" + req.files['adpform'][0].filename :  req.body.adpform;
+    const medicalenrollmentformPath = req.files['medicalenrollmentform'] ? "uploads/" + req.files['medicalenrollmentform'][0].filename :  req.body.medicalenrollmentform;
+    const experiencePath = req.files['experience'] ? "uploads/" + req.files['experience'][0].filename :  req.body.experience;
+    const employeehandbookPath = req.files['employeehandbook'] ? "uploads/" + req.files['employeehandbook'][0].filename :  req.body.employeehandbook;
+    const offerletterPath = req.files['offerletter'] ? "uploads/" + req.files['offerletter'][0].filename :  req.body.offerletter;
+    const values = [ 
+        category, candidatename, emailaddress, phonenumber, 
+        ssn, passportPath, drivingPath, photoPath, i9Path,
+        w4Path, bankahcformPath, adpformPath, medicalenrollmentformPath, 
+        experiencePath, employeehandbookPath, offerletterPath, userId
+    ];
+    const sql = `
+        UPDATE candidateonboarding
+        SET 
+            category = ?,
+            candidatename = ?,
+            emailaddress = ?,
+            phonenumber = ?, 
+            ssn = ?,
+            passport = ?,
+            drivinglicense = ?,
+            photo = ?,
+            i9 = ?,
+            w4 = ?,
+            bankahcform = ?,
+            adpform = ?,
+            medicalenrollmentform = ?, 
+            experience = ?,
+            employeehandbook = ?,
+            offerletter = ?
+        WHERE 
+            id = ?`; // Update query with placeholders for values
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Error updating data:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data updated successfully');
+        res.status(200).json({ message: 'Data updated successfully' });
+    });
+    
+});
+
 
 //UPDATE USERDATA (STAFF USER)
 app.put('/update-user-form/:userId', (req, res) => {
@@ -954,6 +1096,16 @@ app.delete('/delete-training/:userId', (req, res) => {
 app.delete('/delete-interview/:userId', (req, res) => {
     const userId = req.params.userId
     const sql = "DELETE FROM interview WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) return (err)
+        return res.json("User Deleted Successfully")
+    })
+})
+
+// DELETE FROM CANDIDATE ONBOARDING (CANDIDATEONBOARDING USER)
+app.delete('/delete-candidate-onboarding/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "DELETE FROM candidateonboarding WHERE id = ?"
     db.query(sql, [userId], (err, data) => {
         if (err) return (err)
         return res.json("User Deleted Successfully")
