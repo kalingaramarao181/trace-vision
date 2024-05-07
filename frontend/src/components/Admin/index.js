@@ -16,6 +16,19 @@ import Training from "../Training";
 import Interview from "../Interview";
 import TrashBin from "../TrashBin";
 import CandidateOnboarding from "../CandidateOnboarding";
+import EmployeeOnbording from "../EmployeeOnboarding";
+import { FaHome } from "react-icons/fa";
+import { FaUserTie } from "react-icons/fa6";
+import { FaDatabase } from "react-icons/fa6";
+import { FaBook } from "react-icons/fa";
+import { FaToolbox } from "react-icons/fa6";
+import { LiaGraduationCapSolid } from "react-icons/lia";
+import { HiOutlineMenu } from "react-icons/hi";
+import { HiMiniComputerDesktop } from "react-icons/hi2";
+import { SiOnlyoffice } from "react-icons/si";
+import { PiBuildingOfficeBold } from "react-icons/pi";
+import { FaUsers } from "react-icons/fa";
+import { IoTrashBin } from "react-icons/io5";
 const baseUrl = config.baseUrl
 
 const Admin = (props) => {
@@ -29,6 +42,7 @@ const Admin = (props) => {
     const [isOpenTrainingForm, setIsOpenTrainingForm] = useState(false);
     const [isOpenInterviewForm, setIsOpenInterviewForm] = useState(false);
     const [isOpenCandidateOnboardingForm, setIsOpenCandidateOnboardingForm] = useState(false);
+    const [isOpenEmployeeOnboardingForm, setIsOpenEmployeeOnboardingForm] = useState(false);
 
     const [isW2DropdownOpen, setIsW2DropdownOpen] = useState(false)
     const [is1099DropdownOpen, setIs1099DropdownOpen] = useState(false)
@@ -58,6 +72,8 @@ const Admin = (props) => {
     const [trainingForm, setTrainingForm] = useState({})
     const [interviewForm, setInterviewForm] = useState({})
     const [candidateOnboardingForm, setCandidateOnboardingForm] = useState({})
+    const [employeeOnboardingForm, setEmployeeOnboardingForm] = useState({})
+
 
 
 
@@ -141,6 +157,11 @@ const Admin = (props) => {
         setCandidateOnboardingForm({...candidateOnboardingForm, [e.target.name]: e.target.value})
     }
 
+    //HANDLE EMPLOYEE ONBOARDING FORM TEXT
+    const handleEmployeeOnboardingFormData = (e) => {
+        setEmployeeOnboardingForm({...employeeOnboardingForm, [e.target.name]: e.target.value})
+    }
+
     //HANDLE USER FORM TEXT
     const handleUserFormData = (e) => {
         setFormUser({ ...formUser, [e.target.name]: e.target.value })
@@ -167,11 +188,17 @@ const Admin = (props) => {
     const handleCandidatesFileData = (e) => {
         setCandidatesForm({ ...candidatesForm, [e.target.name]: e.target.files[0]})
     }
+    
 
 
     //HANDLE CANDIDATE ONBOARDING FORM FILES
     const handleCandidateOnboardingFileData = (e) => {
         setCandidateOnboardingForm({ ...candidateOnboardingForm, [e.target.name]: e.target.files[0]})
+    }
+
+    //HANDLE EMPLOYEE ONBOARDING FORM FILES
+    const handleEmployeeOnboardingFileData = (e) => {
+        setEmployeeOnboardingForm({ ...employeeOnboardingForm, [e.target.name]: e.target.files[0]})
     }
 
 
@@ -419,6 +446,27 @@ const Admin = (props) => {
         }
     }
 
+    //SUBMIT CANDIDATE ONBOARDING LIST FORM
+    const handleSubmitEmployeeOnboarding = async (e) => {
+        e.preventDefault()
+        const formData = new FormData();
+        Object.entries(employeeOnboardingForm).forEach(([key, value]) => {
+            formData.append(key, value)
+        });
+
+        try {
+            await axios.post(`${baseUrl}employee-onboarding-form`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            alert('Application submitted successfully');
+            window.location.reload()
+        } catch (error) {
+            console.error('Error submitting application:', error);
+        }
+    }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -544,14 +592,6 @@ const Admin = (props) => {
                                         <option value="">--Select Category--</option>
                                         <option value="Recruiting">Recruiting</option>
                                         <option value="Bench">Bench</option>
-                                        <option value="Hot">Hot</option>
-                                        <option value="Jobs">Jobs</option>
-                                        <option value="Prime">Prime</option>
-                                        <option value="Training">Training</option>
-                                        <option value="Interview">Interview</option>
-                                        <option value="CandidateOnboarding">Candidate Onboarding</option>
-                                        <option value="VendorOnboarding">Vendor Onboarding</option>
-                                        <option value="Immigration">Immigration</option>
                                     </select>
                                 </div>
                                 <div className="tw-input-pack-container">
@@ -711,16 +751,7 @@ const Admin = (props) => {
                                         <label className="tw-label">Category:</label>
                                         <select name="category" onChange={handleHotFormData} className="tw-select" required>
                                             <option value="">--Select Category--</option>
-                                            <option value="Recruiting">Recruiting</option>
-                                            <option value="Bench">Bench</option>
-                                            <option value="Hot">Hot</option>
-                                            <option value="Jobs">Jobs</option>
-                                            <option value="Prime">Prime</option>
-                                            <option value="Training">Training</option>
-                                            <option value="Interview">Interview</option>
-                                            <option value="CandidateOnboarding">Candidate Onboarding</option>
-                                            <option value="VendorOnboarding">Vendor Onboarding</option>
-                                            <option value="Immigration">Immigration</option>
+                                            <option value="Hot">Hot List</option>
                                         </select>
                                     </div>
                                     <div className="tw-input-pack-container">
@@ -811,16 +842,7 @@ const Admin = (props) => {
                                         <label className="tw-label">Category:</label>
                                         <select name="category" onChange={handleJobsFormData} className="tw-select" required>
                                             <option value="">--Select Category--</option>
-                                            <option value="Recruiting">Recruiting</option>
-                                            <option value="Bench">Bench</option>
-                                            <option value="Hot">Hot</option>
                                             <option value="Jobs">Jobs</option>
-                                            <option value="Prime">Prime</option>
-                                            <option value="Training">Training</option>
-                                            <option value="Interview">Interview</option>
-                                            <option value="CandidateOnboarding">Candidate Onboarding</option>
-                                            <option value="VendorOnboarding">Vendor Onboarding</option>
-                                            <option value="Immigration">Immigration</option>
                                         </select>
                                     </div>
                                     <div className="tw-input-pack-container">
@@ -895,16 +917,7 @@ const Admin = (props) => {
                                         <label className="tw-label">Category:</label>
                                         <select name="category" onChange={handlePrimeFormData} className="tw-select" required>
                                             <option value="">--Select Category--</option>
-                                            <option value="Recruiting">Recruiting</option>
-                                            <option value="Bench">Bench</option>
-                                            <option value="Hot">Hot</option>
-                                            <option value="Jobs">Jobs</option>
-                                            <option value="Prime">Prime</option>
-                                            <option value="Training">Training</option>
-                                            <option value="Interview">Interview</option>
-                                            <option value="CandidateOnboarding">Candidate Onboarding</option>
-                                            <option value="VendorOnboarding">Vendor Onboarding</option>
-                                            <option value="Immigration">Immigration</option>
+                                            <option value="Prime">Prime Venders</option>
                                         </select>
                                     </div>
                                     <div className="tw-input-pack-container">
@@ -995,17 +1008,7 @@ const Admin = (props) => {
                                         <label className="tw-label">Category:</label>
                                         <select name="category" onChange={handleClientsFormData} className="tw-select" required>
                                             <option value="">--Select Category--</option>
-                                            <option value="Recruiting">Recruiting</option>
-                                            <option value="Bench">Bench</option>
-                                            <option value="Hot">Hot</option>
-                                            <option value="Jobs">Jobs</option>
-                                            <option value="Prime">Prime</option>
                                             <option value="Clients">Clients</option>
-                                            <option value="Training">Training</option>
-                                            <option value="Interview">Interview</option>
-                                            <option value="CandidateOnboarding">Candidate Onboarding</option>
-                                            <option value="VendorOnboarding">Vendor Onboarding</option>
-                                            <option value="Immigration">Immigration</option>
                                         </select>
                                     </div>
                                     <div className="tw-input-pack-container">
@@ -1080,18 +1083,7 @@ const Admin = (props) => {
                                         <label className="tw-label">Category:</label>
                                         <select name="category" onChange={handleCandidatesFormData} className="tw-select" required>
                                             <option value="">--Select Category--</option>
-                                            <option value="Recruiting">Recruiting</option>
-                                            <option value="Bench">Bench</option>
-                                            <option value="Hot">Hot</option>
-                                            <option value="Jobs">Jobs</option>
-                                            <option value="Prime">Prime</option>
-                                            <option value="Clients">Clients</option>
                                             <option value="Candidates">Candidates</option>
-                                            <option value="Training">Training</option>
-                                            <option value="Interview">Interview</option>
-                                            <option value="CandidateOnboarding">Candidate Onboarding</option>
-                                            <option value="VendorOnboarding">Vendor Onboarding</option>
-                                            <option value="Immigration">Immigration</option>
                                         </select>
                                     </div>
                                     <div className="tw-input-pack-container">
@@ -1182,17 +1174,7 @@ const Admin = (props) => {
                                         <label className="tw-label">Category:</label>
                                         <select name="category" onChange={handleTrainingFormData} className="tw-select" required>
                                             <option value="">--Select Category--</option>
-                                            <option value="Recruiting">Recruiting</option>
-                                            <option value="Bench">Bench</option>
-                                            <option value="Hot">Hot</option>
-                                            <option value="Jobs">Jobs</option>
-                                            <option value="Prime">Prime</option>
-                                            <option value="Clients">Clients</option>
                                             <option value="Training">Training</option>
-                                            <option value="Interview">Interview</option>
-                                            <option value="CandidateOnboarding">Candidate Onboarding</option>
-                                            <option value="VendorOnboarding">Vendor Onboarding</option>
-                                            <option value="Immigration">Immigration</option>
                                         </select>
                                     </div>
                                     <div className="tw-input-pack-container">
@@ -1267,17 +1249,7 @@ const Admin = (props) => {
                                         <label className="tw-label">Category:</label>
                                         <select name="category" onChange={handleInterviewFormData} className="tw-select" required>
                                             <option value="">--Select Category--</option>
-                                            <option value="Recruiting">Recruiting</option>
-                                            <option value="Bench">Bench</option>
-                                            <option value="Hot">Hot</option>
-                                            <option value="Jobs">Jobs</option>
-                                            <option value="Prime">Prime</option>
-                                            <option value="Clients">Clients</option>
-                                            <option value="Training">Training</option>
                                             <option value="Interview">Interview</option>
-                                            <option value="CandidateOnboarding">Candidate Onboarding</option>
-                                            <option value="VendorOnboarding">Vendor Onboarding</option>
-                                            <option value="Immigration">Immigration</option>
                                         </select>
                                     </div>
                                     <div className="tw-input-pack-container">
@@ -1353,7 +1325,7 @@ const Admin = (props) => {
     }
 
     //ADD CANDIDATE ONBOARDING FORM
-    const hotCandidateOnboardingPopup = () => {
+    const candidateOnboardingFormPopup = () => {
         return (
                 <Popup
                     open={isOpenCandidateOnboardingForm}
@@ -1380,16 +1352,7 @@ const Admin = (props) => {
                                         <label className="tw-label">Category:</label>
                                         <select name="category" onChange={handleCandidateOnboardingFormData} className="tw-select" required>
                                             <option value="">--Select Category--</option>
-                                            <option value="Recruiting">Recruiting</option>
-                                            <option value="Bench">Bench</option>
-                                            <option value="Hot">Hot</option>
-                                            <option value="Jobs">Jobs</option>
-                                            <option value="Prime">Prime</option>
-                                            <option value="Training">Training</option>
-                                            <option value="Interview">Interview</option>
                                             <option value="CandidateOnboarding">Candidate Onboarding</option>
-                                            <option value="VendorOnboarding">Vendor Onboarding</option>
-                                            <option value="Immigration">Immigration</option>
                                         </select>
                                     </div>
                                     <div className="tw-input-pack-container">
@@ -1496,6 +1459,142 @@ const Admin = (props) => {
                                     <div className="tw-popup-button-container">
                                         <button type="submit" className="popup-save">Save</button>
                                         <button type="button" onClick={() => setIsOpenCandidateOnboardingForm(false)} className="popup-close">Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+                </Popup>
+            )
+    }
+
+    //ADD EMPLOYEE ONBOARDING FORM
+    const employeeOnboardingFormPopup = () => {
+        return (
+                <Popup
+                    open={isOpenEmployeeOnboardingForm}
+                    onClose={() => setIsOpenEmployeeOnboardingForm(false)}
+                    closeOnDocumentClick
+                    contentStyle={{
+                        width: "40vw",
+                        padding: '3.5vw',
+                        borderRadius: '10px',
+                        boxShadow: '0 6px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+                        transition: 'opacity 0.5s ease-in-out', // Transition effect for opacity
+                        backgroundColor: "white",
+                        height: "80vh",
+                        overflowY: "auto",
+                        scrollbarWidth: "none", /* Firefox */
+                    }}
+                >
+                    {close => (
+                        <div className="tw-admin-popup-container">
+                            <div>
+                                <h1>Application</h1>
+                                <form onSubmit={handleSubmitEmployeeOnboarding} className="tw-form-container">
+                                    <div className="tw-input-container">
+                                        <label className="tw-label">Category:</label>
+                                        <select name="category" onChange={handleEmployeeOnboardingFormData} className="tw-select" required>
+                                            <option value="">--Select Category--</option>
+                                            <option value="EmployeeOnboarding">Employee Onboarding</option>
+                                        </select>
+                                    </div>
+                                    <div className="tw-input-pack-container">
+                                    <div className="tw-input-container">
+                                            <label className="tw-label">Candidate Name</label>
+                                            <input name="candidatename" onChange={handleEmployeeOnboardingFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Email Address</label>
+                                            <input name="emailaddress" onChange={handleEmployeeOnboardingFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Phone Number</label>
+                                            <input name="phonenumber" onChange={handleEmployeeOnboardingFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                    </div>
+                                    <div className="tw-input-pack-container">
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">HR Manager</label>
+                                            <input name="hrmanager" onChange={handleEmployeeOnboardingFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Exam Date</label>
+                                            <input name="examdate" onChange={handleEmployeeOnboardingFormData} type="date" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Location</label>
+                                            <input name="location" onChange={handleEmployeeOnboardingFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                    </div>
+                                    <div className="tw-input-pack-container">
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Father Name</label>
+                                            <input name="fathername" onChange={handleEmployeeOnboardingFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Mother Name</label>
+                                            <input name="mothername" onChange={handleEmployeeOnboardingFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Parent Phone Number</label>
+                                            <input name="parentphonenumber" onChange={handleEmployeeOnboardingFormData} type="text" className="tw-input" required/>
+                                        </div>
+                                    </div>
+
+                                    <div className="tw-input-pack-container">
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Feedback 1</label>
+                                            <textarea name="feedback1" rows={5} onChange={handleEmployeeOnboardingFormData} className="tw-textarea" type="text" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Feedback 2</label>
+                                            <textarea name="feedback2" rows={5} onChange={handleEmployeeOnboardingFormData} className="tw-textarea" type="text" required/>
+                                        </div>
+                                        <div className="tw-input-container">
+                                            <label className="tw-label">Feedback 3</label>
+                                            <textarea name="feedback3" rows={5} onChange={handleEmployeeOnboardingFormData} className="tw-textarea" type="text" required/>
+                                        </div>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="resume" name="resume" type="file" onChange={handleEmployeeOnboardingFileData} className="tw-file-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="resume">Resume</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="preofferletter" name="preofferletter" type="file" onChange={handleEmployeeOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="preofferletter">Pre Offer Letter</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="onlinetest" name="onlinetest" type="file" onChange={handleEmployeeOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="onlinetest">Online Test</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="markssheet10th" name="markssheet10th" type="file" onChange={handleEmployeeOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="markssheet10th">10th Marks Sheet</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="markssheet12th" name="markssheet12th" type="file" onChange={handleEmployeeOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="markssheet12th">12th Marks Sheet</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="degreeorbtech" name="degreeorbtech" type="file" onChange={handleEmployeeOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="degreeorbtech">Degree OR B.Tech</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="pancard" name="pancard" type="file" onChange={handleEmployeeOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="pancard">PAN Card</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="aadharcard" name="aadharcard" type="file" onChange={handleEmployeeOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="aadharcard">Adhar Card</label>
+                                    </div>
+                                    <div className="tw-file-input-container">
+                                        <input id="experienceletters" name="experienceletters" type="file" onChange={handleEmployeeOnboardingFileData} className="tw-input" required/>
+                                        <label className="tw-file-input-label" htmlFor="experienceletters">Experience Letters</label>
+                                    </div>
+                                    <div className="tw-popup-button-container">
+                                        <button type="submit" className="popup-save">Save</button>
+                                        <button type="button" onClick={() => setIsOpenEmployeeOnboardingForm(false)} className="popup-close">Close</button>
                                     </div>
                                 </form>
                             </div>
@@ -1740,6 +1839,8 @@ const Admin = (props) => {
             return <Interview searchValueData={searchValue}/>
         }else if (sidebarStatus === "CandidateOnboarding"){
             return <CandidateOnboarding searchValueData={searchValue}/>
+        }else if (sidebarStatus === "EmployeeOnboarding"){
+            return <EmployeeOnbording searchValueData={searchValue}/>
         }else if (sidebarStatus === "Trashbin"){
             return <TrashBin searchValueData={searchValue}/>
         }
@@ -1767,6 +1868,8 @@ const Admin = (props) => {
                 return <button onClick={() => setIsOpenInterviewForm(true)} className="tw-add-button">+ Add New</button>;
             case "CandidateOnboarding":
                 return <button onClick={() => setIsOpenCandidateOnboardingForm(true)} className="tw-add-button">+ Add New</button>;
+            case "EmployeeOnboarding":
+                return <button onClick={() => setIsOpenEmployeeOnboardingForm(true)} className="tw-add-button">+ Add New</button>;
             case "Users":
                 return <button onClick={() => setIsOpenUserForm(true)} className="tw-add-button">+ Add User</button>;
             default:
@@ -1783,18 +1886,19 @@ const Admin = (props) => {
     return (
         <div className="tw-admin-container">
             <div className="admin-sidebar">
-                <button style={{ backgroundColor: sidebarStatus === "Recruiting" && "#0E0C49" }} onClick={() => onClickSidebarButton("Recruiting")} className="admin-sidebar-button">Recruiting</button>
-                <button style={{ backgroundColor: sidebarStatus === "Bench" && "#0E0C49" }} onClick={() => onClickSidebarButton("Bench")} className="admin-sidebar-button">Bench Sales</button>
-                <button style={{ backgroundColor: sidebarStatus === "Hot" && "#0E0C49" }} onClick={() => onClickSidebarButton("Hot")} className="admin-sidebar-button">Hot List</button>
-                <button style={{ backgroundColor: sidebarStatus === "Jobs" && "#0E0C49" }} onClick={() => onClickSidebarButton("Jobs")} className="admin-sidebar-button">Jobs</button>
-                <button style={{ backgroundColor: sidebarStatus === "Prime" && "#0E0C49" }} onClick={() => onClickSidebarButton("Prime")} className="admin-sidebar-button">Prime Vendors</button>
-                <button style={{ backgroundColor: sidebarStatus === "Clients" && "#0E0C49" }} onClick={() => onClickSidebarButton("Clients")} className="admin-sidebar-button">Clients</button>
-                <button style={{ backgroundColor: sidebarStatus === "Candidates" && "#0E0C49" }} onClick={() => onClickSidebarButton("Candidates")} className="admin-sidebar-button">Candidates</button>
-                <button style={{ backgroundColor: sidebarStatus === "Training" && "#0E0C49" }} onClick={() => onClickSidebarButton("Training")} className="admin-sidebar-button">Training</button>
-                <button style={{ backgroundColor: sidebarStatus === "Interview" && "#0E0C49" }} onClick={() => onClickSidebarButton("Interview")} className="admin-sidebar-button">Interview</button>
-                <button style={{ backgroundColor: sidebarStatus === "CandidateOnboarding" && "#0E0C49" }} onClick={() => onClickSidebarButton("CandidateOnboarding")} className="admin-sidebar-button">Candidate Onboarding</button>
-                <button style={{ backgroundColor: sidebarStatus === "Trashbin" && "#0E0C49" }} onClick={() => onClickSidebarButton("Trashbin")} className="admin-sidebar-button">Trash Bin </button>
-                <button style={{ backgroundColor: sidebarStatus === "Users" && "#0E0C49" }} onClick={() => onClickSidebarButton("Users")} className="admin-sidebar-button">Users</button>
+                <button style={{ backgroundColor: sidebarStatus === "Recruiting" && "#0E0C49" }} onClick={() => onClickSidebarButton("Recruiting")} className="admin-sidebar-button"><FaHome  className="sidebar-icon"/> Recruiting</button>
+                <button style={{ backgroundColor: sidebarStatus === "Bench" && "#0E0C49" }} onClick={() => onClickSidebarButton("Bench")} className="admin-sidebar-button"><FaUserTie  className="sidebar-icon"/>Bench Sales</button>
+                <button style={{ backgroundColor: sidebarStatus === "Hot" && "#0E0C49" }} onClick={() => onClickSidebarButton("Hot")} className="admin-sidebar-button"><FaDatabase  className="sidebar-icon"/>Hot List</button>
+                <button style={{ backgroundColor: sidebarStatus === "Jobs" && "#0E0C49" }} onClick={() => onClickSidebarButton("Jobs")} className="admin-sidebar-button"><FaBook  className="sidebar-icon"/>Jobs</button>
+                <button style={{ backgroundColor: sidebarStatus === "Prime" && "#0E0C49" }} onClick={() => onClickSidebarButton("Prime")} className="admin-sidebar-button"><FaToolbox  className="sidebar-icon"/>Prime Vendors</button>
+                <button style={{ backgroundColor: sidebarStatus === "Clients" && "#0E0C49" }} onClick={() => onClickSidebarButton("Clients")} className="admin-sidebar-button"><FaUsers   className="sidebar-icon"/>Clients</button>
+                <button style={{ backgroundColor: sidebarStatus === "Candidates" && "#0E0C49" }} onClick={() => onClickSidebarButton("Candidates")} className="admin-sidebar-button"><LiaGraduationCapSolid   className="sidebar-icon"/>Candidates</button>
+                <button style={{ backgroundColor: sidebarStatus === "Training" && "#0E0C49" }} onClick={() => onClickSidebarButton("Training")} className="admin-sidebar-button"><HiOutlineMenu  className="sidebar-icon"/>Training</button>
+                <button style={{ backgroundColor: sidebarStatus === "Interview" && "#0E0C49" }} onClick={() => onClickSidebarButton("Interview")} className="admin-sidebar-button"><HiMiniComputerDesktop   className="sidebar-icon"/>Interview</button>
+                <button style={{ backgroundColor: sidebarStatus === "CandidateOnboarding" && "#0E0C49" }} onClick={() => onClickSidebarButton("CandidateOnboarding")} className="admin-sidebar-button"><SiOnlyoffice   className="sidebar-icon"/>Candidate Onboarding</button>
+                <button style={{ backgroundColor: sidebarStatus === "EmployeeOnboarding" && "#0E0C49" }} onClick={() => onClickSidebarButton("EmployeeOnboarding")} className="admin-sidebar-button"><PiBuildingOfficeBold   className="sidebar-icon"/>Employee Onboarding</button>
+                <button style={{ backgroundColor: sidebarStatus === "Users" && "#0E0C49" }} onClick={() => onClickSidebarButton("Users")} className="admin-sidebar-button"><FaUsers   className="sidebar-icon"/>Users</button>
+                <button style={{ backgroundColor: sidebarStatus === "Trashbin" && "#0E0C49" }} onClick={() => onClickSidebarButton("Trashbin")} className="admin-sidebar-button"><IoTrashBin  className="sidebar-icon"/>Trash Bin </button>
             </div>
             <div className="adimin-main-data-container">
                 <div className="adimin-main-data-top-container">
@@ -1823,7 +1927,8 @@ const Admin = (props) => {
                 {candidatesFormPopup()}
                 {trainingFormPopup()}
                 {interviewFormPopup()}
-                {hotCandidateOnboardingPopup()}
+                {candidateOnboardingFormPopup()}
+                {employeeOnboardingFormPopup()}
                 {dataEditPopup()}
             </div>
         </div>

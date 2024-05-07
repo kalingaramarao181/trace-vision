@@ -46,3 +46,18 @@
 .submittion-date{
     color: rgb(76, 76, 245);
 }
+.barchart-head-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+.barchart-back-icon{
+    font-size: 4vw;
+    font-weight: bold;
+    background-color: rgb(170, 172, 174);
+    width: 6vw;
+    border-radius: 5px;
+    height: 5vh;
+    color: black;
+}

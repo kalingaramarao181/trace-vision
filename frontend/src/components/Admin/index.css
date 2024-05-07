@@ -40,12 +40,16 @@ td{
 .admin-sidebar-button {
     background-color: transparent;
     border: none;
-    font-size: 1.5vw;
+    font-size: 1.2vw;
     padding: 0.8vw;
     margin-bottom: 1vh;
     color: white;
     width: 18vw;
     text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
 }
 .admin-sidebar-button:hover {
     background-color: #0E0C49;
@@ -164,6 +168,7 @@ td{
 }
 .tw-textarea{
     border-radius: 5px;
+    padding: 0.5vw;
 }
 .tw-file-input-container{
     border: 0.1px solid grey;
@@ -182,9 +187,11 @@ td{
     color: white;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
+    cursor: pointer;
 }
 .tw-file-input{
     padding: 1vh;
+    cursor: pointer;
 }
 .tw-popup-button-container{
     display: flex;
@@ -244,6 +251,7 @@ td{
 }
 .action-view-button, .action-edit-button, .action-delete-button{
     margin-right: 0.5vw;
+    margin-bottom: 0.3vh;
     border-radius: 5px;
     color: white;
     border: none;
@@ -316,7 +324,6 @@ td{
 }
 td{
     border-bottom:1px solid black;
-    background-color: rgb(247, 248, 248);
     width: 30vw;
 }
 .dropdown-trigger {
@@ -361,10 +368,14 @@ td{
     border-radius: 5px;
     margin-top: 3.2vh;
 }
+.sidebar-icon{
+    font-size: 1.5vw;
+    margin-right: 0.5vw ;
+}
 
 @media only screen and (max-width: 768px) {
     .admin-sidebar{
-        height: 40vh;
+        height: 50vh;
     }
     .action-view-button, .action-edit-button, .action-delete-button{
         width: 4vw;

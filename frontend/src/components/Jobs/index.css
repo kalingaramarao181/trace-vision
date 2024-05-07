@@ -19,4 +19,12 @@
     width: 7vw;
     height: 8vh;
   }
+  .popup-animation {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.popup-animation.open {
+    opacity: 1;
+}
   

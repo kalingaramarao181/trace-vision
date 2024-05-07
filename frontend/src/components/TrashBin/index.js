@@ -116,7 +116,7 @@ const TrashBin = () => {
                                 <button type="button" onClick={() => deleteAlert(each.id)} className="trashbin-delete-button">Delete</button>
                             </div>
                         </div>
-                    ))}</> : <p>No Data Found</p>}
+                    ))}</> : <p className="no-data-reaction">No Data Found</p>}
             </div>
         </div>
     )

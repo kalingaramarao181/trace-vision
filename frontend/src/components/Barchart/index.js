@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 import config from "../config";
+import { Link } from "react-router-dom"
 import * as XLSX from 'xlsx';
 import { BarChart, Bar, XAxis, YAxis, Legend, ResponsiveContainer, Cell, PieChart, Pie, Tooltip, CartesianGrid } from "recharts";
 import './index.css'
+import { MdOutlineKeyboardBackspace } from "react-icons/md";
 
 const baseUrl = config.baseUrl
 const barchartCategoery = localStorage.getItem("barchartCategoery")
@@ -79,11 +81,13 @@ const Barchats = () => {
                 console.log(err);
             })
     }
-    const colors = ['#AF2424', '#9A3503', '#966E0E', '#828A0F', '#3B7304', '#FA062E', '#3B0192', '#10535D', '#860DF8', '#24402D' ]
+    const colors = ['#F331AC', '#31ECF3', '#F39931', '#51F927', '#8E3BF3', '#F43F3F', '#F47038', '#F4B838', '#C1F438', '#38F49C', '#3898F4', '#7038F4', '#F23B66' ]
     return (
         <div className="barchart-total-container">
-            <div>
+            <div className="barchart-head-container">
+                <Link to="admin"><MdOutlineKeyboardBackspace className="barchart-back-icon"/></Link>
                 <h1 className="barchat-main-heading">{barchartCategoery} - Employees Submissions Report</h1>
+                <p></p>
             </div>
             <hr />
             <form onSubmit={handileSubmit} className="barchat-search-container">

@@ -195,6 +195,19 @@ app.get('/candidate-onboarding-application-data', (req, res) => {
     });
 });
 
+//GET DATA FROM EMPLOYEE ONBOARDING (EMPLOYEE ONBOARDING)
+app.get('/employee-onboarding-application-data', (req, res) => {
+    // Fetch data from the database
+    const sql = 'SELECT * FROM employeeonboarding';
+    db.query(sql, (err, result) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(result);
+    });
+});
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //GET SINGLE USER DATA
 
@@ -282,6 +295,16 @@ app.get('/interview-application/:userId', (req, res) => {
 app.get('/candidate-onboarding-application/:userId', (req, res) => {
     const userId = req.params.userId
     const sql = "SELECT * FROM candidateonboarding WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data[0])
+    })
+})
+
+//GET DATA FROM EMPLOYEE ONBOARDING USING ID (EMPLOYEE ONBOARDING)
+app.get('/employee-onboarding-application/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "SELECT * FROM employeeonboarding WHERE id = ?"
     db.query(sql, [userId], (err, data) => {
         if (err) return res.json(err)
         return res.json(data[0])
@@ -594,6 +617,51 @@ app.post('/candidate-onboarding-form', upload.fields([
      ]
 
     const sql = 'INSERT INTO candidateonboarding (`category`, `candidatename`, `emailaddress`, `phonenumber`, `ssn`, `passport`, `drivinglicense`, `photo`, `i9`, `w4`, `bankahcform`, `adpform`, `medicalenrollmentform`, `experience`, `employeehandbook`, `offerletter`) VALUES (?)';
+    db.query(sql, [values], (err, result) => {
+        if (err) {
+            console.error('Error inserting data into database:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data inserted successfully');
+        res.status(201).json({ message: 'Application submitted successfully' });
+    });
+});
+
+// POST TO EMPLOYEE ONBOARDING (EMPLOYEEONBORDING)
+app.post('/employee-onboarding-form', upload.fields([
+    { name: 'resume', maxCount: 1 },
+    { name: 'preofferletter', maxCount: 1 },
+    { name: 'onlinetest', maxCount: 1 },
+    { name: 'markssheet10th', maxCount: 1 },
+    { name: 'markssheet12th', maxCount: 1 },
+    { name: 'degreeorbtech', maxCount: 1 },
+    { name: 'pancard', maxCount: 1 },
+    { name: 'aadharcard', maxCount: 1 },
+    { name: 'experienceletters', maxCount: 1 },
+]), (req, res) => {
+    const { category, candidatename, emailaddress, phonenumber, hrmanager, examdate, location, fathername, mothername, parentphonenumber, feedback1, feedback2, feedback3 } = req.body;
+    const resumePath = req.files['resume'] ? "uploads/" + req.files['resume'][0].filename : "";
+    const preofferletterPath = req.files['preofferletter'] ? "uploads/" + req.files['preofferletter'][0].filename : "";
+    const onlinetestPath = req.files['onlinetest'] ? "uploads/" + req.files['onlinetest'][0].filename : "";
+    const markssheet10thPath = req.files['markssheet10th'] ? "uploads/" + req.files['markssheet10th'][0].filename : "";
+    const markssheet12thPath = req.files['markssheet12th'] ? "uploads/" + req.files['markssheet12th'][0].filename : "";
+    const degreeorbtechPath = req.files['degreeorbtech'] ? "uploads/" + req.files['degreeorbtech'][0].filename : "";
+    const pancardPath = req.files['pancard'] ? "uploads/" + req.files['pancard'][0].filename : "";
+    const aadharcardPath = req.files['aadharcard'] ? "uploads/" + req.files['aadharcard'][0].filename : "";
+    const experiencelettersPath = req.files['experienceletters'] ? "uploads/" + req.files['experienceletters'][0].filename : "";
+
+
+    const values = [
+        category, candidatename, emailaddress, phonenumber, 
+        hrmanager, examdate, location, fathername, mothername, 
+        parentphonenumber, feedback1, feedback2, feedback3, resumePath,
+        preofferletterPath, onlinetestPath, markssheet10thPath,
+        markssheet12thPath, degreeorbtechPath, pancardPath, aadharcardPath,
+        experiencelettersPath
+     ]
+
+    const sql = 'INSERT INTO  employeeonboarding (`category`, `candidatename`, `emailaddress`, `phonenumber`, `hrmanager`, `examdate`, `location`, `fathername`, `mothername`, `parentphonenumber`, `feedback1`, `feedback2`, `feedback3`, `resume`, `preofferletter`, `onlinetest`, `markssheet10th`, `markssheet12th`, `degreeorbtech`, `pancard`, `aadharcard`, `experienceletters`) VALUES (?)';
     db.query(sql, [values], (err, result) => {
         if (err) {
             console.error('Error inserting data into database:', err);
@@ -992,6 +1060,79 @@ app.put('/update-candidate-onboarding-application/:userId', upload.fields([
     
 });
 
+//UPDATE CANDIDATE ONBOARDING (CANDIDATE)
+app.put('/update-employee-onboarding-application/:userId', upload.fields([
+    { name: 'resume', maxCount: 1 },
+    { name: 'preofferletter', maxCount: 1 },
+    { name: 'onlinetest', maxCount: 1 },
+    { name: 'markssheet10th', maxCount: 1 },
+    { name: 'markssheet12th', maxCount: 1 },
+    { name: 'degreeorbtech', maxCount: 1 },
+    { name: 'pancard', maxCount: 1 },
+    { name: 'aadharcard', maxCount: 1 },
+    { name: 'experienceletters', maxCount: 1 },
+
+]), (req, res) => {
+    const { userId } = req.params; // Extract the ID from the URL
+    const { category, candidatename, emailaddress, phonenumber, hrmanager, examdate, location, fathername, mothername, parentphonenumber, feedback1, feedback2, feedback3, 
+        resume,  preofferletter, onlinetest, markssheet10th, markssheet12th,  degreeorbtech, pancard, aadharcard, experienceletters} = req.body;
+    const resumePath = req.files['resume'] ? "uploads/" + req.files['resume'][0].filename : resume;
+    const preofferletterPath = req.files['preofferletter'] ? "uploads/" + req.files['preofferletter'][0].filename : preofferletter;
+    const onlinetestPath = req.files['onlinetest'] ? "uploads/" + req.files['onlinetest'][0].filename : onlinetest;
+    const markssheet10thPath = req.files['markssheet10th'] ? "uploads/" + req.files['markssheet10th'][0].filename : markssheet10th;
+    const markssheet12thPath = req.files['markssheet12th'] ? "uploads/" + req.files['markssheet12th'][0].filename : markssheet12th;
+    const degreeorbtechPath = req.files['degreeorbtech'] ? "uploads/" + req.files['degreeorbtech'][0].filename : degreeorbtech;
+    const pancardPath = req.files['pancard'] ? "uploads/" + req.files['pancard'][0].filename : pancard;
+    const aadharcardPath = req.files['aadharcard'] ? "uploads/" + req.files['aadharcard'][0].filename : aadharcard;
+    const experiencelettersPath = req.files['experienceletters'] ? "uploads/" + req.files['experienceletters'][0].filename : experienceletters;
+    const values = [ 
+        category, candidatename, emailaddress, phonenumber, 
+        hrmanager, examdate, location, fathername, mothername, 
+        parentphonenumber, feedback1, feedback2, feedback3, resumePath,
+        preofferletterPath, onlinetestPath, markssheet10thPath,
+        markssheet12thPath, degreeorbtechPath, pancardPath, aadharcardPath,
+        experiencelettersPath, userId
+    ];
+    const sql = `
+        UPDATE employeeonboarding
+        SET 
+            category = ?,
+            candidatename = ?,
+            emailaddress = ?, 
+            phonenumber = ?, 
+            hrmanager = ?, 
+            examdate = ?, 
+            location = ?, 
+            fathername = ?, 
+            mothername = ?, 
+            parentphonenumber = ?, 
+            feedback1 = ?, 
+            feedback2 = ?, 
+            feedback3 = ?, 
+            resume = ?,
+            preofferletter = ?, 
+            onlinetest = ?, 
+            markssheet10th = ?,
+            markssheet12th = ?, 
+            degreeorbtech = ?, 
+            pancard = ?, 
+            aadharcard = ?,
+            experienceletters = ?
+        WHERE 
+            id = ?`; // Update query with placeholders for values
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Error updating data:', err);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        console.log('Data updated successfully');
+        res.status(200).json({ message: 'Data updated successfully' });
+    });
+    
+});
+
 
 //UPDATE USERDATA (STAFF USER)
 app.put('/update-user-form/:userId', (req, res) => {
@@ -1106,6 +1247,16 @@ app.delete('/delete-interview/:userId', (req, res) => {
 app.delete('/delete-candidate-onboarding/:userId', (req, res) => {
     const userId = req.params.userId
     const sql = "DELETE FROM candidateonboarding WHERE id = ?"
+    db.query(sql, [userId], (err, data) => {
+        if (err) return (err)
+        return res.json("User Deleted Successfully")
+    })
+})
+
+// DELETE FROM EMPLOYEE ONBOARDING (EMPLOYEEONBOARDING USER)
+app.delete('/delete-employee-onboarding/:userId', (req, res) => {
+    const userId = req.params.userId
+    const sql = "DELETE FROM employeeonboarding WHERE id = ?"
     db.query(sql, [userId], (err, data) => {
         if (err) return (err)
         return res.json("User Deleted Successfully")

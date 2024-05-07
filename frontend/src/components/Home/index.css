@@ -1,37 +1,102 @@
-.home-container {
-    background-image: url("https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA1L2pvYjE4NzItYmFja2dyb3VuZC1zYXZlLTA3Yy5qcGc.jpg");
-    height: 90vh;
-    background-size: cover;
-}
-
-.home-e2e-heading2 {
-    color: white;
-}
-.home-span-head {
-    color: #f09e07;
-    font-weight: bold;
-    font-size: 3vw;
-}
-.home-content-container {
-    color: white;
-
-}
-.home-full-content-container {
+.home-main-container{
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
-    padding: 40px;
+    height: 46vh;
+    background-color: rgb(12, 118, 189);
+    margin: 1.5vw;
 }
-.home-image-logo {
-    height: 50vh;
-    align-self: flex-start;
+.Home-heading{
+   font-size: 2.7vw;
+   color: white;
 }
-.home-all-paragraph {
-    font-size: 1.4vw;
+.home-paragraph{
+    font-size: 1.1vw;
+    width: 35vw;
+   text-align: justify;
+   color: white;
+}
+.home-e2e-spantag{
+    color: rgb(245, 179, 38);
+}
+.home-image{
+    width: 30vw;
+}
+.home-button{
+    width: 35vw;
+    padding: 12px;
     font-weight: bold;
-    text-decoration: none;
-    margin-top: 1.5vw;
-    margin: 20px;
+    background-color:rgb(245, 179, 38);
+    border: none;
+    border-radius: 4px;
+    font-family: roboto;
+    font-size: 1.2vw;
 }
+.home-head2{
+    font-family: roboto;
+    font-size: 2vw;
+    padding: 8px;
+    text-align: center;
+    margin: 0px ;
 
+}
+.home-head-recruting{
+    font-size: 1.5vw;
+    text-align: center;
+}
+.home-para-recruting{
+    font-size: 1vw;
+    width: 20vw;
+    text-align: justify;
+}
+.home-card-container{
+    width: 20vw;
+    height: 11vw;
+    box-shadow: 0 2px 8px 0 rgba(14, 13, 13, 0.678), 0 4px 20px 0 rgba(0, 0, 0, 0.603);
+padding: 10px;
+margin: 20px;
+border-radius: 7px;
+
+}
+.home-main-card-containter{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+.continuous-horizontal-scroll-container {
+    width: 100%; /* Adjust this as per your layout */
+    overflow: hidden; /* Hide the overflowing content */
+    
+  }
+  
+  .content {
+    display: flex;
+    animation: scroll 20s linear infinite; /* Adjust animation duration as needed */
+  }
+  
+  .content-item {
+    flex-shrink: 0; /* Prevent items from shrinking */
+    padding: 10px; /* Adjust padding as needed */
+  }
+  
+  @keyframes scroll {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-100%); /* Move content from left to right */
+    }
+  }
+  .home-icons{
+    display: flex;
+    flex-direction: row;
+    justify-content:center;
+    align-items: center;
+    
+  }
+  .icon{
+    margin-right: 16px;
+    color:rgb(12, 118, 189);
+    font-size: 2vw;
+  }
