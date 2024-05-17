@@ -17,15 +17,6 @@ const db = mysql.createPool({
     queueLimit: 0,
   });
 
-// DATABASE CONNECTION STATUS
-db.connect((err) => {
-    if (err) {
-        console.error('Error connecting to database:', err);
-        return;
-    }
-    console.log('Connected to database');
-});
-
 // Add CORS middleware
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000'); // Replace with your frontend URL
