@@ -7,14 +7,11 @@ const fs = require('fs');
 const app = express();
 
 // DATABASE CONNECTION OBJECT
-const db = mysql.createPool({
+const db = mysql.createConnection({
     host: process.env.DB_HOST || "localhost",
     user: process.env.DB_USER || "root",
     password: process.env.DB_PASSWORD || "",
-    database: process.env.DB_DATABASE || "tracevision",
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
+    database: process.env.DB_DATABASE || "credenceanalytics",
   });
 
 // Add CORS middleware
