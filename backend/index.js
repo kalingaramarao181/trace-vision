@@ -7,12 +7,15 @@ const fs = require('fs');
 const app = express();
 
 // DATABASE CONNECTION OBJECT
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'tracevision'
-});
+const db = mysql.createPool({
+    host: process.env.DB_HOST || "localhost",
+    user: process.env.DB_USER || "root",
+    password: process.env.DB_PASSWORD || "",
+    database: process.env.DB_DATABASE || "tracevision",
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+  });
 
 // DATABASE CONNECTION STATUS
 db.connect((err) => {
