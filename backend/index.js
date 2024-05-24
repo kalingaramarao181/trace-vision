@@ -65,7 +65,7 @@ app.post("/login", (req, res) => {
 })
 
 app.get("/", (req, res) => {
-    res.json("Welcome Trace Vision Application")
+    res.json("Welcome Trace Vision App")
 })
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //GET DATA
