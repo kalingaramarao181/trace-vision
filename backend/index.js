@@ -16,7 +16,10 @@ const db = mysql.createConnection({
 
 // Add CORS middleware
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'https://tracevision.beedatatech.com/'); // Replace with your frontend URL
+    res.setHeader('Access-Control-Allow-Origin', 'https://tracevision.beedatatech.com/');
+    res.setHeader('Access-Control-Allow-Origin', 'https://tracevision.beedatatech.com/admin');
+    res.setHeader('Access-Control-Allow-Origin', 'https://tracevision.beedatatech.com/barchart');
+    res.setHeader('Access-Control-Allow-Origin', 'https://tracevision.beedatatech.com/login');// Replace with your frontend URL
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
